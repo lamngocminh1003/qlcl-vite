@@ -25,7 +25,6 @@ const userLogin = (data) => {
 };
 const fetchAllUsers = (id) => {
   let config = createConfig();
-
   return axios.get(
     `${backendURL}/api/v1/User/from-category-id?id=${id}`,
     config

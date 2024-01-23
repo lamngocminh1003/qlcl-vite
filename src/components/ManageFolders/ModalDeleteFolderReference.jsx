@@ -29,7 +29,7 @@ const ModalDeleteFolderReference = (props) => {
       if (res) {
         //success
         setShowDeleteFolderReference(false);
-        toast.success("Tham chiếu quy trình thành công");
+        toast.success("Xóa tham chiếu quy trình thành công");
         handleEditTable({
           folderName: dataFolders.folderName,
           id: dataFolders.id,
@@ -37,7 +37,7 @@ const ModalDeleteFolderReference = (props) => {
       }
       setIsShowLoading(false);
     } catch (error) {
-      toast.error("Tham chiếu quy trình thất bại");
+      toast.error("Xóa tham chiếu quy trình thất bại");
     }
   };
   useEffect(() => {
@@ -108,7 +108,7 @@ const ModalDeleteFolderReference = (props) => {
             {isShowLoading && (
               <i className="fas fa-spinner fa-pulse me-2 text-white"></i>
             )}
-            Lưu thay đổi
+            Xóa tham chiếu
           </Button>
         </Modal.Footer>
       </Modal>

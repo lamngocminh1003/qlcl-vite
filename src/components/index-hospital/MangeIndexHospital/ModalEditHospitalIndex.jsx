@@ -7,7 +7,8 @@ import { updateMajorStat } from "../../../services/index/MajorStatService";
 const ModalEditHospitalIndex = (props) => {
   const [id, setId] = useState("");
   const [statName, setStatName] = useState("");
-  let { dataIndex, showEdit, setShowEdit, fetchListMajorStats } = props;
+  let { dataIndex, showEdit, setShowEdit, fetchListMajorStatsAndManifest } =
+    props;
   const unit = ["phút", "giờ", "ngày", "%", "", "điểm", "sự cố"];
   const [selectedUnit, setSelectedUnit] = useState(dataIndex?.unit);
   const handleChangeSelectUnit = (event) => {
@@ -33,7 +34,7 @@ const ModalEditHospitalIndex = (props) => {
         setShowEdit(false);
         toast.success("Cập nhật thông tin chỉ số thành công");
         setStatName("");
-        fetchListMajorStats();
+        fetchListMajorStatsAndManifest();
       }
       setIsShowLoading(false);
     } catch (error) {

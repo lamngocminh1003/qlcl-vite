@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchRevisionActiveByFolderIdService } from "../../services/revisionService";
+import { fetchFileActiveByFolderIdService } from "../../services/fileService";
 import ModalEditRevision from "./ModalEditRevision";
 import ModalAddRevision from "./ModalAddRevision";
 import { useHistory } from "react-router-dom";
@@ -28,10 +29,13 @@ const ActiveRevision = (props) => {
   const [listRevisions, setListRevisions] = useState([]);
   const [categoryId, setCategoryId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [countFile, setCountFile] = useState("");
+
   let history = useHistory();
   useEffect(() => {
     fetchActiveRevisionByFolderId(folderId, categoryId);
     getFolderInfoByFolderId(folderId, categoryId);
+    fetchFileActiveByFolderId(folderId, categoryId);
   }, [folderId, categoryId]);
   useEffect(() => {
     if (props.match && props.match.params && props.match.params.id) {
@@ -62,6 +66,14 @@ const ActiveRevision = (props) => {
       }
     } catch (error) {
       setIsLoading(false);
+    }
+  };
+  const fetchFileActiveByFolderId = async (folderId, categoryId) => {
+    setIsLoading(true);
+    let res = await fetchFileActiveByFolderIdService(folderId, +categoryId, 5);
+    if (res && res.data) {
+      setIsLoading(false);
+      setCountFile(res.data.files.length);
     }
   };
   const handleViewFileByRevisionActive = () => {
@@ -112,7 +124,14 @@ const ActiveRevision = (props) => {
               title="Tài liệu"
               className="btn btn-primary"
             >
-              <DescriptionIcon />
+              {" "}
+              {categoryIdLocal == 1 ? (
+                <>
+                  <DescriptionIcon /> {countFile}
+                </>
+              ) : (
+                <DescriptionIcon />
+              )}
             </button>
           </>
         );

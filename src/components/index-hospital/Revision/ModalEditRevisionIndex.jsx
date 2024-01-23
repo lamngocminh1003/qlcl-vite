@@ -21,6 +21,11 @@ const ModalEditRevisionIndex = (props) => {
     fetchAllCascadeByStatService,
     indexId,
     statName,
+    fetchAllCascadeByYear,
+    year,
+    fetchAllCascadeByYearSpan,
+    yearEnd,
+    yearStart,
   } = props;
   const initialValues = {
     id: dataRevision.cascadeId,
@@ -45,15 +50,25 @@ const ModalEditRevisionIndex = (props) => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const handDelete = async (values) => {
     try {
+      setIsShowLoadingDelete(true);
       let res = await deleteCascadeService(values.id);
       if (res) {
         //success
         setShowEdit(false);
         toast.success("Xóa phiên bản chỉ số thành công");
-        fetchAllCascadeByStatService(indexId);
+        if (indexId) {
+          fetchAllCascadeByStatService(indexId);
+        } else if (year) {
+          fetchAllCascadeByYear(year);
+        } else if (yearStart && yearEnd) {
+          fetchAllCascadeByYearSpan(yearStart, yearEnd);
+        }
+        setIsShowLoadingDelete(false);
       }
+      setIsShowLoadingDelete(false);
     } catch (error) {
       toast.error("Xóa phiên bản chỉ số không thành công");
+      setIsShowLoadingDelete(false);
     }
   };
   const userSchema = Yup.object().shape({
@@ -78,7 +93,13 @@ const ModalEditRevisionIndex = (props) => {
         //success
         setShowEdit(false);
         toast.success("Cập nhật thông tin phiên bản chỉ số thành công");
-        fetchAllCascadeByStatService(indexId);
+        if (indexId) {
+          fetchAllCascadeByStatService(indexId);
+        } else if (year) {
+          fetchAllCascadeByYear(year);
+        } else if (yearStart && yearEnd) {
+          fetchAllCascadeByYearSpan(yearStart, yearEnd);
+        }
       } else if (res.status === 400 && res.data.formulaError) {
         toast.error("Công thức đánh giá không hợp lệ. Vui lòng thử lại!");
       }
@@ -95,7 +116,10 @@ const ModalEditRevisionIndex = (props) => {
           <Modal.Title className="fs-6 text-uppercase text-primary">
             Cập nhật phiên bản năm{" "}
             <span className="text-warning">{dataRevision.effectiveYear}</span>{" "}
-            của chỉ số <span className="text-warning">{statName}</span>{" "}
+            của chỉ số{" "}
+            <span className="text-warning">
+              {statName || dataRevision.statName}
+            </span>{" "}
           </Modal.Title>
         </Modal.Header>
         <Formik

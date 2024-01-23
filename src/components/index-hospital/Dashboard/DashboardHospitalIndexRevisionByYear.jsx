@@ -70,6 +70,9 @@ const DashboardHospitalIndexRevisionByYear = () => {
   const handleSearchYearSpan = () => {
     history.push(`/hospital-index-revision-by-year-span`);
   };
+  const handleHospitalIndexRevisionByYear = () => {
+    history.push(`/hospital-index-revision-by-year/${year}`);
+  };
   if (isLoading) {
     return (
       <div className="loading">
@@ -95,7 +98,7 @@ const DashboardHospitalIndexRevisionByYear = () => {
   };
   return (
     <>
-      <div className="container">
+      <div className="container mb-5">
         <h2 className="text-center text-primary mt-3">
           Biểu đồ chỉ số bệnh viện
         </h2>{" "}
@@ -117,20 +120,32 @@ const DashboardHospitalIndexRevisionByYear = () => {
               year={year}
               fetchAllCascadeByYear={fetchAllCascadeByYear}
               setYear={setYear}
-            />
-            <div className="col-lg-9 mt-lg-1 ps-lg-5 ms-lg-5">
-              <div className=" ps-lg-5 ">
-                <Button
-                  variant="outlined"
-                  aria-label="outlined button group"
-                  onClick={() => {
-                    handleSearchYearSpan();
-                  }}
-                >
-                  {" "}
-                  Tìm chỉ số trong nhiều năm
-                </Button>
-              </div>
+            />{" "}
+            <div className="col-lg-4 mt-lg-1 ms-lg-5 ">
+              <Button
+                size="small"
+                variant="outlined"
+                aria-label="outlined button group"
+                onClick={() => {
+                  handleHospitalIndexRevisionByYear();
+                }}
+              >
+                {" "}
+                Danh sách chỉ số trong năm {year}
+              </Button>
+            </div>
+            <div className="col-lg-4 mt-lg-1 ms-lg-5 ps-1">
+              <Button
+                size="small"
+                variant="outlined"
+                aria-label="outlined button group"
+                onClick={() => {
+                  handleSearchYearSpan();
+                }}
+              >
+                {" "}
+                Tìm chỉ số trong nhiều năm
+              </Button>
             </div>
           </div>{" "}
           <div className="col-lg-2 d-flex justify-content-end">

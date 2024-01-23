@@ -15,7 +15,6 @@ const ModalFolderReference = (props) => {
   const [id, setId] = useState("");
   const [folderName, setFolderName] = useState("");
   const [isShowLoading, setIsShowLoading] = useState(false);
-  const [categoryId, setCategoryId] = useState("");
   const [value, setValue] = useState(categoryData[0]);
   const [inputValue, setInputValue] = useState("");
   const [categorySelect, setCategorySelect] = useState(categoryData[0]?.id);
@@ -45,7 +44,6 @@ const ModalFolderReference = (props) => {
     if (showFolderReference) {
       setFolderName(dataFolders.folderName);
       setId(dataFolders.id);
-      setCategoryId(dataFolders.categoryId);
     }
   }, [dataFolders]);
   return (

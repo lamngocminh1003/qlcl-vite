@@ -13,7 +13,6 @@ const createConfig = () => {
 };
 const fetchRevisionActiveByFolderIdService = (id, categoryId) => {
   let config = createConfig();
-
   return axios.get(
     `${backendURL}/api/v1/Revision/from-folder-active?folderId=${id}&categoryId=${categoryId}`,
     config

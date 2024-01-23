@@ -5,7 +5,8 @@ import { toast } from "react-toastify";
 import { deleteMajorStat } from "../../../services/index/MajorStatService";
 const ModalDeleteHospitalIndex = (props) => {
   const [statName, setStatName] = useState("");
-  let { setShowDelete, showDelete, dataIndex, fetchListMajorStats } = props;
+  let { setShowDelete, showDelete, dataIndex, fetchListMajorStatsAndManifest } =
+    props;
   const handleClose = () => setShowDelete(false);
   const [id, setId] = useState("");
   const handleOnClickDelete = async () => {
@@ -15,7 +16,7 @@ const ModalDeleteHospitalIndex = (props) => {
         //success
         setShowDelete(false);
         toast.success("Xóa chỉ số thành công");
-        fetchListMajorStats();
+        fetchListMajorStatsAndManifest();
       } else {
         toast.error("Xóa chỉ số không thành công");
       }

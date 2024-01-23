@@ -112,3 +112,22 @@ export function renderCellExpand(params) {
     />
   );
 }
+export const cellStyle = {
+  width: "100%",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: "5px",
+  borderRadius: "4px",
+};
+export const iconStyle = {
+  fontSize: "12px",
+  marginRight: "5px",
+};
+export const textStyle = {
+  fontSize: "12px",
+};
+export const textStyleJoinMode = {
+  fontSize: "10px",
+  textTransform: "capitalize",
+};

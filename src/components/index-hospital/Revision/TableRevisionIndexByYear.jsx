@@ -40,7 +40,11 @@ const TableRevisionIndexByYear = (props) => {
       field: "criteria",
       headerName: "Mục tiêu",
       cellClassName: "name-column--cell",
-      valueGetter: (params) => params?.value + " " + dataMajorStats?.unit,
+      valueGetter: (params) => {
+        const result =
+          params?.value + " " + params?.row?.unit || dataMajorStats?.unit;
+        return result;
+      },
     },
     {
       field: "yearResult",

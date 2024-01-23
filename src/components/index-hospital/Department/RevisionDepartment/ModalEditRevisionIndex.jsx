@@ -19,6 +19,14 @@ const ModalEditRevisionIndex = (props) => {
     timestamp,
     indexId,
     MinorStatDetailsByStatId,
+    year,
+    MinorStatDetailsByYear,
+    yearStart,
+    yearEnd,
+    MinorStatDetailsByYearSpan,
+    MinorStatDetailsByYearAndCategory,
+    departmentId,
+    MinorStatDetailsByYearSpanAndCategory,
   } = props;
   const value = dataRevision[timestamp];
   // Hàm để đếm số lượng các thuộc tính bắt đầu từ "stat"
@@ -41,14 +49,28 @@ const ModalEditRevisionIndex = (props) => {
           //success
           setShowEdit(false);
           toast.success(`Xóa kết quả ${onlyTimestamp[1]} thành công`);
-          MinorStatDetailsByStatId(indexId);
+          if (indexId) {
+            MinorStatDetailsByStatId(indexId);
+          } else if (departmentId && yearStart && yearEnd) {
+            MinorStatDetailsByYearSpanAndCategory(
+              departmentId,
+              yearStart,
+              yearEnd
+            );
+          } else if (departmentId && year) {
+            MinorStatDetailsByYearAndCategory(departmentId, year);
+          } else if (year) {
+            MinorStatDetailsByYear(year);
+          } else if (yearStart && yearEnd) {
+            MinorStatDetailsByYearSpan(yearStart, yearEnd);
+          }
         } else {
           toast.error(`Xóa kết quả ${onlyTimestamp[1]} thất bại`);
         }
         setIsShowLoadingDelete(false);
       } else {
         let res = await deleteMinorStatDetailByIdentityService(
-          +indexId,
+          dataRevision.statId,
           dataRevision.effectiveYear,
           onlyTimestamp[1]
         );
@@ -56,7 +78,21 @@ const ModalEditRevisionIndex = (props) => {
           //success
           setShowEdit(false);
           toast.success(`Xóa kết quả ${onlyTimestamp[1]} thành công`);
-          MinorStatDetailsByStatId(indexId);
+          if (indexId) {
+            MinorStatDetailsByStatId(indexId);
+          } else if (departmentId && yearStart && yearEnd) {
+            MinorStatDetailsByYearSpanAndCategory(
+              departmentId,
+              yearStart,
+              yearEnd
+            );
+          } else if (departmentId && year) {
+            MinorStatDetailsByYearAndCategory(departmentId, year);
+          } else if (year) {
+            MinorStatDetailsByYear(year);
+          } else if (yearStart && yearEnd) {
+            MinorStatDetailsByYearSpan(yearStart, yearEnd);
+          }
         } else {
           toast.error(`Xóa kết quả ${onlyTimestamp[1]} thất bại`);
         }
@@ -92,7 +128,7 @@ const ModalEditRevisionIndex = (props) => {
     try {
       setIsShowLoading(true);
       let res = await createMinorStatDetailsService(
-        +indexId,
+        dataRevision.statId,
         dataRevision.effectiveYear,
         onlyTimestamp[1],
         +values.stat
@@ -101,7 +137,21 @@ const ModalEditRevisionIndex = (props) => {
         //success
         setShowEdit(false);
         toast.success("Cập nhật kết quả thành công");
-        MinorStatDetailsByStatId(indexId);
+        if (indexId) {
+          MinorStatDetailsByStatId(indexId);
+        } else if (departmentId && yearStart && yearEnd) {
+          MinorStatDetailsByYearSpanAndCategory(
+            departmentId,
+            yearStart,
+            yearEnd
+          );
+        } else if (departmentId && year) {
+          MinorStatDetailsByYearAndCategory(departmentId, year);
+        } else if (year) {
+          MinorStatDetailsByYear(year);
+        } else if (yearStart && yearEnd) {
+          MinorStatDetailsByYearSpan(yearStart, yearEnd);
+        }
       }
       setIsShowLoading(false);
     } catch (error) {

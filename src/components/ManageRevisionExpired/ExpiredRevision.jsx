@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { fetchRevisionExpiredByFolderIdService } from "../../services/revisionService";
+import {
+  fetchRevisionExpiredByFolderIdService,
+  fetchRevisionActiveByFolderIdService,
+  cloneRevision,
+} from "../../services/revisionService";
+import { fetchFileExpiredByRevisionIdService } from "../../services/fileService";
 import ModalEditRevision from "./ModalEditRevision";
 import ModalDeleteRevision from "./ModalDeleteRevision";
 import ModalAddRevision from "../ManageRevisionActive/ModalAddRevision";
@@ -11,6 +16,8 @@ import { format } from "date-fns"; // Import thư viện định dạng ngày th
 import { Oval } from "react-loader-spinner";
 import ScrollToTopButton from "../input/ScrollToTopButton";
 import EditIcon from "@mui/icons-material/Edit";
+import FolderCopyIcon from "@mui/icons-material/FolderCopy";
+import { toast } from "react-toastify";
 import {
   DataGrid,
   viVN,
@@ -20,7 +27,7 @@ import {
   GridToolbarContainer,
   GridToolbarExport,
 } from "@mui/x-data-grid";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import DescriptionIcon from "@mui/icons-material/Description";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TaskIcon from "@mui/icons-material/Task";
@@ -34,10 +41,13 @@ const RevisionExpired = (props) => {
   const [listRevisions, setListRevisions] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [activeRevisionId, setActiveRevisionId] = useState("");
+  const [isShowLoading, setIsShowLoading] = useState(false);
   let history = useHistory();
   useEffect(() => {
     fetchRevisionExpiredRevisionByFolderId(folderId, categoryId);
     getFolderInfoByFolderId(folderId, categoryId);
+    fetchRevisionActiveByFolderId(folderId, categoryId);
   }, [folderId]);
   useEffect(() => {
     if (props.match && props.match.params && props.match.params.id) {
@@ -62,7 +72,39 @@ const RevisionExpired = (props) => {
     setIsLoading(true);
     let res = await fetchRevisionExpiredByFolderIdService(folderId, categoryId);
     if (res) {
-      setListRevisions(res?.data?.revisions);
+      const listRevisionData = res?.data?.revisions;
+      const [fileExpiredRevision] = await Promise.all([
+        Promise.all(
+          listRevisionData.map((revision) =>
+            fetchFileByRevisionExpiredId(revision.id)
+          )
+        ),
+      ]);
+      const combinedRevision = listRevisionData.map((revision, index) => ({
+        ...revision,
+        files: fileExpiredRevision[index] || null,
+      })); // Further processing on combined data
+      const newData = combinedRevision.map((item) => ({
+        ...item,
+        countFile: item.files ? item.files.length : 0,
+      }));
+      setListRevisions(newData);
+      setIsLoading(false);
+    }
+  };
+  const fetchFileByRevisionExpiredId = async (revisionId) => {
+    setIsLoading(true);
+    let res = await fetchFileExpiredByRevisionIdService(revisionId, 5);
+    if (res && res.data.files) {
+      setIsLoading(false);
+      return res.data.files;
+    }
+  };
+  const fetchRevisionActiveByFolderId = async (folderId, categoryId) => {
+    setIsLoading(true);
+    let res = await fetchRevisionActiveByFolderIdService(folderId, categoryId);
+    if (res) {
+      setActiveRevisionId(res?.data?.id);
       setIsLoading(false);
     }
   };
@@ -143,6 +185,7 @@ const RevisionExpired = (props) => {
               className="btn btn-primary"
             >
               <DescriptionIcon />
+              {params.row.countFile}
             </button>
           </>
         );
@@ -256,6 +299,22 @@ const RevisionExpired = (props) => {
   const handleUpdateTable = () => {
     fetchRevisionExpiredRevisionByFolderId(folderId, categoryId);
   };
+  const handleCloneActiveRevision = async () => {
+    if (activeRevisionId) {
+      try {
+        setIsShowLoading(true);
+        let res = await cloneRevision(activeRevisionId);
+        if (res && res.data.id) {
+          fetchRevisionExpiredRevisionByFolderId(folderId, categoryId);
+          toast.success("Nhân bản phiên bản hiện hành thành công");
+        }
+        setIsShowLoading(false);
+      } catch (error) {
+        setIsShowLoading(false);
+        toast.error("Nhân bản phiên bản hiện hành thất bại");
+      }
+    }
+  };
   return (
     <>
       <ModalEditRevision
@@ -297,7 +356,24 @@ const RevisionExpired = (props) => {
                   folderId={folderId}
                   categoryId={categoryId}
                 />
-              </span>
+              </span>{" "}
+              <span>
+                <Button
+                  variant="outlined"
+                  onClick={() => handleCloneActiveRevision()}
+                >
+                  {isShowLoading ? (
+                    <span className="me-1">
+                      <i className="fas fa-spinner fa-pulse me-1 text-primary"></i>
+                    </span>
+                  ) : (
+                    <span className="me-1">
+                      <FolderCopyIcon />{" "}
+                    </span>
+                  )}
+                  <span>Sao chép phiên bản hiện hành</span>
+                </Button>
+              </span>{" "}
             </div>
             <Box style={{ height: 600, width: "100%" }} className="my-3">
               {listRevisions.length > 0 ? (

@@ -132,57 +132,31 @@ const Dashboard = ({
 
   return (
     <>
-      <div className="mt-5">
-        {" "}
-        <div>
-          <h5 className="ps-5 text-center">
-            <span
-              onClick={() => handleDepartment(data)}
-              className="department  underline-opening-success"
-            >
-              {data.categoryName}
-            </span>
-          </h5>
-        </div>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart
-            data={quarters}
-            margin={{ bottom: 10 }}
-            isZoomEnabled={false}
-          >
-            <XAxis dataKey="name" />
-            {/* Sử dụng giá trị YAxis mới tính toán được */}
-            <YAxis domain={[0, yAxisMax]} />
-            <CartesianGrid stroke="#ccc" />
-            <Tooltip content={<CustomTooltip />} />
-            <Bar
-              dataKey="value"
-              fill="#82CD47"
-              label={(props) =>
-                renderCustomBarLabel({
-                  ...props,
-                  evaluation: quarters[props.index]?.evaluation,
-                })
-              }
-            />
-            <ReferenceLine
-              y={data.criteriaManifest}
-              stroke="red"
-              label={`${data.criteriaManifest} ${data.unit}`}
-            />
-          </BarChart>
-        </ResponsiveContainer>{" "}
-        <div>
-          <h6 className="ps-5  text-center ">
-            <span
-              className="department  underline-opening"
-              onClick={() => handleDepartmentRevision(data)}
-            >
-              Bảng {index + 1}: {data.statName}
-            </span>
-          </h6>
-        </div>
-      </div>
+      {" "}
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={quarters} margin={{ bottom: 10 }} isZoomEnabled={false}>
+          <XAxis dataKey="name" />
+          {/* Sử dụng giá trị YAxis mới tính toán được */}
+          <YAxis domain={[0, yAxisMax]} />
+          <CartesianGrid stroke="#ccc" />
+          <Tooltip content={<CustomTooltip />} />
+          <Bar
+            dataKey="value"
+            fill="#82CD47"
+            label={(props) =>
+              renderCustomBarLabel({
+                ...props,
+                evaluation: quarters[props.index]?.evaluation,
+              })
+            }
+          />
+          <ReferenceLine
+            y={data.criteriaManifest}
+            stroke="red"
+            label={`${data.criteriaManifest} ${data.unit}`}
+          />
+        </BarChart>
+      </ResponsiveContainer>{" "}
     </>
   );
 };

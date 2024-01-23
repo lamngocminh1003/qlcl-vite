@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { CardFooter } from "react-bootstrap";
+import "../App.scss";
 import Page404 from "../components/ErrorPage/Page404";
 import Login from "../components/Login/Login";
 import Users from "../components/ManageUsers/Users";
@@ -30,6 +32,12 @@ import DashboardAllDepartmentIndexRevisionByYear from "../components/index-hospi
 import DashboardAllDepartmentIndexRevisionByYearSpan from "../components/index-hospital/Dashboard/Department/AllDepartment/DashboardAllDepartmentIndexRevisionByYearSpan";
 import AllIndexFromDepartment from "../components/index-hospital/Department/ManageAllIndexFromDepartment/AllIndexFromDepartment";
 import RevisionFile from "../components/index-hospital/Department/ManageRevisionFile/RevisionFile";
+import HospitalIndexRevisionByYearSpan from "../components/index-hospital/Revision/HospitalIndexRevisionByYearSpan";
+import HospitalIndexRevisionByYear from "../components/index-hospital/Revision/HospitalIndexRevisionByYear";
+import AllDepartmentIndexRevisionByYear from "../components/index-hospital/Department/RevisionDepartment/AllDepartmentIndexRevisionByYear";
+import AllDepartmentIndexRevisionByYearSpan from "../components/index-hospital/Department/RevisionDepartment/AllDepartmentIndexRevisionByYearSpan";
+import DepartmentIndexRevisionByYear from "../components/index-hospital/Department/RevisionDepartment/DepartmentIndexRevisionByYear";
+import DepartmentIndexRevisionByYearSpan from "../components/index-hospital/Department/RevisionDepartment/DepartmentIndexRevisionByYearSpan";
 const AppRoutes = (props) => {
   return (
     <>
@@ -88,18 +96,40 @@ const AppRoutes = (props) => {
             component={RevisionIndexDepartmentByYear}
           />{" "}
           <PrivateRoutes
+            exact
             path="/hospital-index-revision-by-year"
             component={DashboardHospitalIndexRevisionByYear}
           />{" "}
           <PrivateRoutes
+            path="/hospital-index-revision-by-year/:year"
+            component={HospitalIndexRevisionByYear}
+          />{" "}
+          <PrivateRoutes
+            exact
             path="/hospital-index-revision-by-year-span"
             component={DashboardHospitalIndexRevisionByYearSpan}
           />{" "}
           <PrivateRoutes
+            path="/hospital-index-revision-by-year-span/:yearStart/:yearEnd"
+            component={HospitalIndexRevisionByYearSpan}
+          />{" "}
+          <PrivateRoutes
+            exact
             path="/department-index-revision-by-year/:id"
             component={DashboardDepartmentIndexRevisionByYear}
           />{" "}
           <PrivateRoutes
+            exact
+            path="/department-index-revision-by-year/:id/:year"
+            component={DepartmentIndexRevisionByYear}
+          />{" "}
+          <PrivateRoutes
+            exact
+            path="/department-index-revision-by-year/:id/:yearStart/:yearEnd"
+            component={DepartmentIndexRevisionByYearSpan}
+          />{" "}
+          <PrivateRoutes
+            exact
             path="/department-index-revision-by-year-span/:id"
             component={DashboardDepartmentIndexRevisionByYearSpan}
           />{" "}
@@ -108,12 +138,22 @@ const AppRoutes = (props) => {
             component={ManifestRevision}
           />{" "}
           <PrivateRoutes
+            exact
             path="/all-department-index-revision-by-year"
             component={DashboardAllDepartmentIndexRevisionByYear}
           />{" "}
           <PrivateRoutes
+            path="/all-department-index-revision-by-year/:year"
+            component={AllDepartmentIndexRevisionByYear}
+          />{" "}
+          <PrivateRoutes
+            exact
             path="/all-department-index-revision-by-year-span"
             component={DashboardAllDepartmentIndexRevisionByYearSpan}
+          />{" "}
+          <PrivateRoutes
+            path="/all-department-index-revision-by-year-span/:yearStart/:yearEnd"
+            component={AllDepartmentIndexRevisionByYearSpan}
           />{" "}
           <PrivateRoutes
             path="/all-minor-stat"
@@ -127,6 +167,9 @@ const AppRoutes = (props) => {
             <Page404 />{" "}
           </Route>
         </Switch>
+        <CardFooter sticky="bottom" className="footer">
+          Phiên bản: 22-01-2024
+        </CardFooter>
       </Router>
     </>
   );

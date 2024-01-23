@@ -15,7 +15,7 @@ import ModalDeleteHospitalIndex from "./ModalDeleteHospitalIndex";
 import { Oval } from "react-loader-spinner";
 import ModalAddNewHospitalIndex from "./ModalAddNewHospitalIndex";
 import { useHistory } from "react-router-dom";
-import { fetchAllCascadeByStat } from "../../../services/index/MajorStatManifestService";
+import { fetchAllMajorStatManifestByYearSpanService } from "../../../services/index/MajorStatDetailService";
 import ScrollToTopButton from "../../input/ScrollToTopButton";
 import { fetchAllMajorStat } from "../../../services/index/MajorStatService";
 import { columnsIndex, columnStatName, columnUnit } from "../../input/Column";
@@ -29,36 +29,40 @@ const IndexHospital = () => {
   const [isLoading, setIsLoading] = useState(false);
   let history = useHistory();
   useEffect(() => {
-    fetchListMajorStats();
+    fetchListMajorStatsAndManifest();
   }, []);
-  const fetchListMajorStats = async () => {
+  const fetchListMajorStatsAndManifest = async () => {
     try {
       setIsLoading(true);
       let res = await fetchAllMajorStat();
       if (res?.data?.majorStats) {
-        const allCascadeByStat = await Promise.all(
-          res.data.majorStats.map(async (majorStats) => {
-            const newData = await fetchAllCascadeByStatService(majorStats.id);
-            return newData || null;
-          })
-        );
-        // Kết hợp dữ liệu thư mục gốc với các tham chiếu
-        const allCascadeByStatWithCount = res.data.majorStats.map(
-          (majorStats, index) => ({
-            ...majorStats,
-            majorStatsCount: allCascadeByStat[index],
-          })
-        );
-        // Hàm để đếm số lượng mục trong majorStatsCount và thêm trường mới
-        function addCountMajorStatField(stats) {
-          stats.countMajorStat = stats.majorStatsCount.length;
-        }
-        // Duyệt qua mảng và thêm trường mới vào mỗi phần tử
-        allCascadeByStatWithCount.forEach(function (item) {
-          addCountMajorStatField(item);
-        });
         // Kiểm tra kết quả
-        setListMajorStats(allCascadeByStatWithCount);
+        const [majorStat, majorStatManifest] = await Promise.all([
+          await fetchListMajorStats(),
+          await fetchAllMajorStatManifestByYearSpan(),
+        ]);
+        let statIdCounts = {};
+        majorStatManifest.forEach((item) => {
+          let statId = item.statId;
+          statIdCounts[statId] = (statIdCounts[statId] || 0) + 1;
+
+          // Tìm mục trong data1 với cùng statId và thêm thông tin từ data2 vào
+          let matchingItem = majorStat.find(
+            (data1Item) => data1Item.id === statId
+          );
+          if (matchingItem) {
+            matchingItem.criteria = item.criteria;
+            matchingItem.formula = item.formula;
+            matchingItem.effectiveYear = item.effectiveYear;
+          }
+        });
+
+        // Thêm trường "số lượng" vào mỗi mục trong data1 dựa vào statIdCounts
+        majorStat.forEach((item) => {
+          let statId = item.id;
+          item.majorManifestCount = statIdCounts[statId] || 0;
+        });
+        setListMajorStats(majorStat);
         setIsLoading(false);
       }
       setIsLoading(false);
@@ -66,15 +70,35 @@ const IndexHospital = () => {
       setIsLoading(false);
     }
   };
-  const fetchAllCascadeByStatService = async (indexId) => {
+  const fetchListMajorStats = async () => {
     try {
       setIsLoading(true);
-      let res = await fetchAllCascadeByStat(indexId);
-      if (res?.data?.majorStatDetails) {
-        const allCascadeByStat = res?.data?.majorStatDetails;
+      let res = await fetchAllMajorStat();
+      if (res?.data?.majorStats) {
+        setListMajorStats(res?.data?.majorStats);
+        let dataMajor = res?.data?.majorStats;
         setIsLoading(false);
-        return allCascadeByStat;
+        return dataMajor;
       }
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+    }
+  };
+  const fetchAllMajorStatManifestByYearSpan = async () => {
+    try {
+      setIsLoading(true);
+      let res = await fetchAllMajorStatManifestByYearSpanService(1990, 3000);
+      if (res?.data?.majorStatManifests) {
+        if (res.data.majorStatManifests.length > 0) {
+          setIsLoading(false);
+          return res.data.majorStatManifests;
+        } else {
+          setIsLoading(false);
+          return -1;
+        }
+      }
+      setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
     }
@@ -135,7 +159,7 @@ const IndexHospital = () => {
               {categoryId == 1 || categoryId == params.row?.categoryId ? (
                 <>
                   <CalendarMonth />
-                  &nbsp;{params?.row?.countMajorStat}
+                  &nbsp;{params?.row?.majorManifestCount}
                 </>
               ) : (
                 <CalendarMonth />
@@ -219,13 +243,13 @@ const IndexHospital = () => {
         setShowEdit={setShowEdit}
         showEdit={showEdit}
         dataIndex={dataIndex}
-        fetchListMajorStats={fetchListMajorStats}
+        fetchListMajorStatsAndManifest={fetchListMajorStatsAndManifest}
       />
       <ModalDeleteHospitalIndex
         setShowDelete={setShowDelete}
         showDelete={showDelete}
         dataIndex={dataIndex}
-        fetchListMajorStats={fetchListMajorStats}
+        fetchListMajorStatsAndManifest={fetchListMajorStatsAndManifest}
       />
       {!isLoading && (
         <>
@@ -238,7 +262,9 @@ const IndexHospital = () => {
               {categoryId == 1 ? (
                 <span>
                   <ModalAddNewHospitalIndex
-                    fetchListMajorStats={fetchListMajorStats}
+                    fetchListMajorStatsAndManifest={
+                      fetchListMajorStatsAndManifest
+                    }
                   />
                 </span>
               ) : (

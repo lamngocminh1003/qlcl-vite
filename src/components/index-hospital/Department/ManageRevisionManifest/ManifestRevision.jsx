@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 import _ from "lodash";
 import { Oval } from "react-loader-spinner";
 import ScrollToTopButton from "../../../input/ScrollToTopButton";
-import { buildData, buildDataGroupYearDepartment } from "../BuildData";
+import { buildData } from "../BuildData";
 import { MinorStatDetailsByStatIdService } from "../../../../services/index/DepartmentStat/MinorStatDetailsService";
 import {
   MinorStatManifestUnapprovedByStatAndYearService,
@@ -23,6 +23,7 @@ import {
 import { Box } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TaskIcon from "@mui/icons-material/Task";
+import Dashboard from "../../Dashboard/Department/AllDepartment/Chart";
 const ManifestRevision = (props) => {
   const categoryId = localStorage.getItem("categoryId");
   const [pageSize, setPageSize] = useState(10);
@@ -33,6 +34,7 @@ const ManifestRevision = (props) => {
   const [departmentId, setDepartmentId] = useState("");
   const [effectiveYear, setEffectiveYear] = useState("");
   const [repoHash, setRepoHash] = useState("");
+  const [statName, setStatName] = useState("");
   const [listManifestRevision, setListManifestRevision] = useState("");
   const [dataRevisionByIndexId, setDataRevisionByIndexId] = useState([]);
   let history = useHistory();
@@ -77,7 +79,8 @@ const ManifestRevision = (props) => {
         );
         if (filteredArray) {
           // Đối tượng đã được tìm thấy
-          setDataRevisionByIndexId(filteredArray);
+          setDataRevisionByIndexId(filteredArray[0]);
+          setStatName(filteredArray[0].statName);
         } else {
           // Không có đối tượng nào có effectiveYear bằng với yearEffective
           setDataRevisionByIndexId([]);
@@ -103,7 +106,9 @@ const ManifestRevision = (props) => {
   const handleApproveMinorStatManifest = async (revision) => {
     let res = await approveMinorStatManifest(revision.hash);
     if (res) {
-      history.push(`/department-index-revision/${indexId}/${departmentId}`);
+      MinorStatManifestByStatAndYear(indexId, effectiveYear);
+      MinorStatDetailsByStatId(indexId);
+      // history.push(`/department-index-revision/${indexId}/${departmentId}`);
     }
   };
   const columns = [
@@ -218,37 +223,52 @@ const ManifestRevision = (props) => {
       />
       <div className="revisionExpired-header">
         <div className="h1 text-center text-primary m-3 px-md-5 px-3">
-          Quản lý phiên bản đánh giá và mục tiêu
+          Quản lý phiên bản đánh giá và mục tiêu{" "}
+          <span className="text-warning">{statName}</span> năm {effectiveYear}
         </div>
         <div className="container">
-          <div className="d-flex gap-3">
+          <div className="row">
             {" "}
-            <span>
-              <button className="btn btn-info" onClick={() => handleBack()}>
+            <div className="col-12 col-lg-6 align-self-end ">
+              <div className="d-flex gap-3 mb-5">
+                {" "}
                 <span>
-                  <i className="fa-solid fa-rotate-left me-1"></i>
-                </span>
-                <span>Trở về</span>
-              </button>
-            </span>{" "}
-            <span>
-              {categoryId == 1 || categoryId == departmentId ? (
+                  <button className="btn btn-info" onClick={() => handleBack()}>
+                    <span>
+                      <i className="fa-solid fa-rotate-left me-1"></i>
+                    </span>
+                    <span>Trở về</span>
+                  </button>
+                </span>{" "}
                 <span>
-                  <ModalAddRevision
-                    MinorStatManifestByStatAndYear={
-                      MinorStatManifestByStatAndYear
-                    }
-                    effectiveYear={effectiveYear}
-                    indexId={indexId}
-                    categoryId={categoryId}
-                    repoHash={repoHash}
-                    departmentId={departmentId}
-                  />
+                  {categoryId == 1 || categoryId == departmentId ? (
+                    <span>
+                      <ModalAddRevision
+                        MinorStatManifestByStatAndYear={
+                          MinorStatManifestByStatAndYear
+                        }
+                        MinorStatDetailsByStatId={MinorStatDetailsByStatId}
+                        effectiveYear={effectiveYear}
+                        indexId={indexId}
+                        categoryId={categoryId}
+                        repoHash={repoHash}
+                        departmentId={departmentId}
+                      />
+                    </span>
+                  ) : (
+                    <span></span>
+                  )}
                 </span>
-              ) : (
-                <span></span>
-              )}
-            </span>
+              </div>
+            </div>
+            <div className="col-12 col-lg-6">
+              {" "}
+              <Dashboard
+                data={dataRevisionByIndexId}
+                key={`dashboard-${1}`}
+                index={1}
+              />
+            </div>
           </div>
           <div className="row">
             <Box style={{ height: 600, width: "100%" }} className="my-3">

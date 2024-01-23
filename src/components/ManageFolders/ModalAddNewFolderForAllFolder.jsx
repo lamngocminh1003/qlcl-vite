@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { createNewFolder } from "../../services/folderService";
 import { TextField, Box, Autocomplete } from "@mui/material";
 const ModalAddNewFolderForAllFolder = (props) => {
-  let { fetchFolders, idCategory, sortOption, listFolders, categoryData } =
+  let { fetchFolders, sortOption, listFolders, categoryData } =
     props;
   const [isShowLoading, setIsShowLoading] = useState(false);
   const [show, setShow] = useState(false);
@@ -119,12 +119,6 @@ const ModalAddNewFolderForAllFolder = (props) => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <input
-            type="text"
-            className="form-control"
-            value={idCategory}
-            hidden
-          />
           <div className="input-group mb-3">
             <span className="input-group-text" id="inputGroup-sizing-default">
               Mã quy trình&nbsp; <span className="text-danger">(*)</span>

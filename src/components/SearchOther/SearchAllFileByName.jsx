@@ -6,7 +6,7 @@ const SearchAllFileByName = (props) => {
   const [expr, setExpr] = useState("");
   const handleSearch = async () => {
     if (!expr) {
-      toast.error("Tìm kiếm thất bại. Vui lòng nhập từ khóa");
+      // toast.error("Tìm kiếm thất bại. Vui lòng nhập từ khóa");
       fetchAllFiles();
     }
     try {
@@ -17,7 +17,7 @@ const SearchAllFileByName = (props) => {
         setListFiles(res.data.files);
       }
     } catch (error) {
-      toast.error("Tìm kiếm thất bại");
+      // toast.error("Tìm kiếm thất bại");
     }
   };
 

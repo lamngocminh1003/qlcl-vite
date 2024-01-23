@@ -8,41 +8,39 @@ import CopyAllIcon from "@mui/icons-material/CopyAll";
 const ModalAddFolderReference = (props) => {
   let { fetchFoldersByCategoryId, idCategory, sortOption, categoryData } =
     props;
-
   const [isShowLoading, setIsShowLoading] = useState(false);
   const [show, setShow] = useState(false);
-  const [folderId, setFolderId] = useState("");
-  const [folderName, setFolderName] = useState("");
   const [value, setValue] = useState(categoryData[0]);
   const [inputValue, setInputValue] = useState("");
-  const [categorySelect, setCategorySelect] = useState(
-    categoryData[0]?.categoryId
-  );
   const [folderSelect, setFolderSelect] = useState(categoryData[0]?.id);
   const handleClose = () => {
     setShow(false);
-    setFolderId("");
-    setFolderName("");
   };
   const handleShow = () => setShow(true);
   const handleOnClickAdd = async () => {
     try {
       setIsShowLoading(true);
-      let res = await folderReference(idCategory, folderSelect);
+      const res = await folderReference(idCategory, folderSelect);
       if (res) {
         //success
         setShow(false);
-        setFolderName("");
-        setFolderId("");
         toast.success("Tham chiếu quy trình thành công!");
         fetchFoldersByCategoryId(idCategory, sortOption);
+      } else if (res.status === 409) {
+        toast.success("Tham chiếu quy trình thành công!");
       } else {
-        toast.error(`${res.data}`);
+        toast.error("Tham chiếu quy trình thất bại!");
       }
       setIsShowLoading(false);
     } catch (error) {
-      toast.error("Tham chiếu quy trình thất bại!");
-      setIsShowLoading(false);
+      if (error.response.status === 409) {
+        setShow(false);
+        toast.success("Tham chiếu quy trình thành công!");
+        fetchFoldersByCategoryId(idCategory, sortOption);
+      } else {
+        toast.error("Tham chiếu quy trình thất bại!");
+        setIsShowLoading(false);
+      }
     }
   };
   return (
@@ -75,9 +73,7 @@ const ModalAddFolderReference = (props) => {
                 (option) => option?.folderName === newValue?.folderName
               );
               if (selectedCategory) {
-                const categoryId = selectedCategory?.categoryId;
                 const folderId = selectedCategory?.id;
-                setCategorySelect(categoryId);
                 setFolderSelect(folderId);
               }
             }}

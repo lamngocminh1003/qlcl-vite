@@ -11,7 +11,7 @@ import {
   TextSnippet,
   TaskAlt,
 } from "@mui/icons-material";
-import { columnsIndex } from "../../../input/Column";
+import { columnStatName, columnDepartmentName } from "../../../input/Column";
 import {
   DataGrid,
   viVN,
@@ -33,9 +33,7 @@ const TableRevisionIndexByYear = (props) => {
     handleDelete,
     handleManifestRevision,
     categoryId,
-    departmentId,
     dataRevisionByIndexId,
-    dataIndex,
     handleViewFile,
     handleClick,
   } = props; // Các style và logic hiển thị dữ liệu khi statId không null hoặc undefined
@@ -92,7 +90,7 @@ const TableRevisionIndexByYear = (props) => {
         );
       }
       if (row[field] === null || row[field] === undefined) {
-        if (categoryId == 1 || categoryId == departmentId) {
+        if (categoryId == 1 || categoryId == row.categoryId) {
           return (
             <Button
               variant="outlined"
@@ -113,7 +111,7 @@ const TableRevisionIndexByYear = (props) => {
           );
         }
       }
-      if (categoryId == 1 || categoryId == departmentId) {
+      if (categoryId == 1 || categoryId == row.categoryId) {
         return (
           <Button
             style={{ ...cellStyle, backgroundColor: cellBackgroundColor }}
@@ -150,7 +148,8 @@ const TableRevisionIndexByYear = (props) => {
     },
   }));
   const columns2 = [
-    ...columnsIndex,
+    ...columnStatName,
+    ...columnDepartmentName,
     {
       field: "effectiveYear",
       headerName: "Năm",
@@ -161,7 +160,7 @@ const TableRevisionIndexByYear = (props) => {
       headerName: "Mục tiêu",
       cellClassName: "name-column--cell",
       valueGetter: (params) =>
-        params?.value ? params.value + " " + (dataIndex?.unit || "") : "",
+        params?.value ? params.value + " " + (params?.row?.unit || "") : "",
     },
     {
       field: "formulaManifest",
@@ -251,7 +250,7 @@ const TableRevisionIndexByYear = (props) => {
               style={{ color: textStyle }}
               onClick={() => handleViewFile(row)}
             >
-              {categoryId == 1 || categoryId == departmentId ? (
+              {categoryId == 1 || categoryId == row.categoryId ? (
                 <>
                   <span className="me-1">
                     {noteCount > 1 || noteCount === 0 ? (
@@ -296,19 +295,30 @@ const TableRevisionIndexByYear = (props) => {
           fontSize: "12px",
         };
         const resultColor = unapprovedManifestCount > 0 ? "#adb5bd" : "none";
-        return (
-          <Box style={{ ...cellStyle, backgroundColor: resultColor }}>
-            <Button
-              style={textStyle}
-              onClick={() => handleManifestRevision(row)}
-            >
-              <span className="me-1">
-                {unapprovedManifestCount > 0 ? <ErrorOutline /> : ""}
-              </span>{" "}
-              {unapprovedManifestCount}
-            </Button>
-          </Box>
-        );
+        if (categoryId == 1 || categoryId == row.categoryId) {
+          return (
+            <Box style={{ ...cellStyle, backgroundColor: resultColor }}>
+              <Button
+                style={textStyle}
+                onClick={() => handleManifestRevision(row)}
+              >
+                <span className="me-1">
+                  {unapprovedManifestCount > 0 ? <ErrorOutline /> : ""}
+                </span>{" "}
+                {unapprovedManifestCount}
+              </Button>
+            </Box>
+          );
+        } else {
+          // Ngược lại, hiển thị Button
+          return (
+            <Box>
+              <Typography className="text-primary">
+                <DoNotDisturbOnOutlined />
+              </Typography>
+            </Box>
+          );
+        }
       },
     },
   ];
@@ -362,7 +372,7 @@ const TableRevisionIndexByYear = (props) => {
           fontSize: "8px",
         };
         const displayText = joinMode === 1 ? "Trung bình" : "Gần nhất";
-        if (categoryId == 1 || categoryId == departmentId) {
+        if (categoryId == 1 || categoryId == row.categoryId) {
           return (
             <Button
               variant="contained"
@@ -409,10 +419,8 @@ const TableRevisionIndexByYear = (props) => {
   let selectedColumns;
   if (categoryId == 1) {
     selectedColumns = columnAd;
-  } else if (categoryId == departmentId) {
-    selectedColumns = columnDepartment;
   } else {
-    selectedColumns = columnOther;
+    selectedColumns = columnDepartment;
   }
   function CustomToolbar() {
     return (

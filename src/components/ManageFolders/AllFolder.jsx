@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  fetchAllFolders,
-  getFolderReferenceByFolderIdService,
-} from "../../services/folderService";
+import { fetchAllFolders } from "../../services/folderService";
 import ModalEditFolder from "./ModalEditFolder";
 import {
   DataGrid,
@@ -31,13 +28,12 @@ import { Box, Button } from "@mui/material";
 import { columnInfoFolder, columnCategoryName } from "../input/Column";
 import ModalDeleteFolderReference from "./ModalDeleteFolderReference";
 import SignalCellularNoSimOutlinedIcon from "@mui/icons-material/SignalCellularNoSimOutlined";
-const AllFolder = (props) => {
+const AllFolder = () => {
   const [listFolders, setListFolders] = useState([]);
   const [categoryData, setCategoryData] = useState([]);
   const [showEdit, setShowEdit] = useState(false);
   const [dataFolders, setDataFolders] = useState({});
   const [showDelete, setShowDelete] = useState(false);
-  const [categoryId, setCategoryId] = useState("");
   const [showFolderReference, setShowFolderReference] = useState(false);
   const [sortOption, setSortOption] = useState(5);
   const [isLoading, setIsLoading] = useState(false);
@@ -78,37 +74,14 @@ const AllFolder = (props) => {
         return 0;
       });
       const foldersData = res.data.folders;
-      if (categoryIdLocalStorage == 1) {
-        const folderReferences = await Promise.all(
-          foldersData.map(async (folder) => {
-            const referenceRes = await getFolderReferenceByFolderId(folder.id);
-            return referenceRes || null;
-          })
-        );
-        // Kết hợp dữ liệu thư mục gốc với các tham chiếu
-        const foldersWithReferences = foldersData.map((folder, index) => ({
-          ...folder,
-          references: folderReferences[index],
-        }));
-        const newData = foldersWithReferences.map((item) => ({
-          ...item,
-          referencesName: item.references
-            .map((ref) => ref.categoryName)
-            .join(", "),
-        }));
-        setListFolders(newData);
-      } else {
-        setListFolders(foldersData);
-      }
+      const newData = foldersData.map((item) => ({
+        ...item,
+        referencesName: item.references
+          .map((ref) => ref.categoryName)
+          .join(", "),
+      }));
+      setListFolders(newData);
       setIsLoading(false);
-    }
-  };
-  const getFolderReferenceByFolderId = async (folderId) => {
-    setIsLoading(true);
-    let res = await getFolderReferenceByFolderIdService(folderId);
-    if (res && res.data.references) {
-      setIsLoading(false);
-      return res.data.references;
     }
   };
   const handleEditTable = (folder) => {
@@ -155,7 +128,13 @@ const AllFolder = (props) => {
               title="Tài liệu hiệu lực"
               className="btn btn-success"
             >
-              <FolderOpenIcon />
+              {categoryIdLocalStorage == 1 ? (
+                <>
+                  <FolderOpenIcon /> {params.row.activeFilesCount}
+                </>
+              ) : (
+                <FolderOpenIcon />
+              )}{" "}
             </button>
           </>
         );
@@ -178,7 +157,7 @@ const AllFolder = (props) => {
               title="Tài liệu hết hiệu lực"
               className="btn btn-secondary"
             >
-              <FolderOffIcon />
+              <FolderOffIcon /> {params.row.inactiveRevisionsCount}
             </button>
           </>
         );
@@ -249,7 +228,7 @@ const AllFolder = (props) => {
               variant="outlined"
               title={params.row.referencesName}
             >
-              <CopyAllIcon />
+              <CopyAllIcon /> {params.row.references.length}
             </Button>
           </>
         );
@@ -270,6 +249,7 @@ const AllFolder = (props) => {
             title={params?.row?.referencesName}
           >
             <SignalCellularNoSimOutlinedIcon />
+            {params.row.references.length}{" "}
           </Button>
         ) : null; // Trả về null nếu không có references
       },
@@ -357,7 +337,6 @@ const AllFolder = (props) => {
                 <ModalAddNewFolderForAllFolder
                   fetchFolders={fetchFolders}
                   listFolders={listFolders}
-                  idCategory={categoryId}
                   sortOption={sortOption}
                   categoryData={categoryData}
                 />
@@ -381,7 +360,6 @@ const AllFolder = (props) => {
                 fetchFolders={fetchFolders}
                 setListFolders={setListFolders}
                 listFolders={listFolders}
-                categoryId={categoryId}
                 sortOption={sortOption}
               />
             </div>

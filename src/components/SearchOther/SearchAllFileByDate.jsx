@@ -12,7 +12,7 @@ const SearchAllFileByDate = (props) => {
   };
   const handleSearch = async () => {
     if (!date) {
-      toast.error("Tìm kiếm thất bại.Vui lòng nhập từ khóa");
+      // toast.error("Tìm kiếm thất bại.Vui lòng nhập từ khóa");
       fetchAllFiles();
     } else if (moment(date).isValid()) {
       const selectedDate = moment(date);
@@ -31,10 +31,10 @@ const SearchAllFileByDate = (props) => {
           setListFiles(res.data.files);
         }
       } catch (error) {
-        toast.error("Tìm kiếm thất bại");
+        // toast.error("Tìm kiếm thất bại");
       }
     } else {
-      toast.error("Ngày không hợp lệ");
+      // toast.error("Ngày không hợp lệ");
     }
   };
 

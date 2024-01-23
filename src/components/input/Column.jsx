@@ -15,15 +15,17 @@ export const columnStatName = [
     field: "statName",
     headerName: "Chỉ số bệnh viện",
     flex: 1,
+    minWidth: 250,
     cellClassName: "name-column--cell",
     renderCell: renderCellExpand,
   },
 ];
-export const columnDepartment = [
+export const columnDepartmentName = [
   {
     field: "categoryName",
     headerName: "Khoa/phòng",
     flex: 1,
+    minWidth: 250,
     cellClassName: "name-column--cell",
     renderCell: renderCellExpand,
   },
@@ -180,7 +182,7 @@ export const columnInfoFolder = [
     headerName: "Mã quy trình",
     cellClassName: "name-column--cell",
     renderCell: renderCellExpand,
-    minWidth: 100,
+    minWidth: 110,
   },
   {
     field: "folderName",
@@ -196,6 +198,7 @@ export const columnCategoryName = [
     headerName: "Thư mục",
     cellClassName: "name-column--cell",
     renderCell: renderCellExpand,
+    flex: 1,
     minWidth: 120,
   },
 ];

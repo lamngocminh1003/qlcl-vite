@@ -17,7 +17,7 @@ import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import { useHistory } from "react-router-dom";
 import { fetchAllCategories } from "../../../../services/categoryService";
 import { SortCategoryIdById } from "../SortCategory";
-import { columnsIndex, columnDepartment } from "../../../input/Column";
+import { columnsIndex, columnDepartmentName } from "../../../input/Column";
 const IndexDepartment = () => {
   const { minorStatCount } = useContext(UserContext);
   const [pageSize, setPageSize] = useState(10);
@@ -170,12 +170,12 @@ const IndexDepartment = () => {
   ];
   const columns = [
     ...columnsIndex,
-    ...columnDepartment,
+    ...columnDepartmentName,
     ...columnViewMinorStat,
   ];
   const columnsAd = [
     ...columnsIndex,
-    ...columnDepartment,
+    ...columnDepartmentName,
     ...columnMinorStatCountAndUnapprovedMinorStatManifestCount,
     ...columnViewMinorStat,
   ];

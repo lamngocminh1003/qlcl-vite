@@ -5,7 +5,6 @@ import { Oval } from "react-loader-spinner";
 import { MinorStatDetailsByYearSpanService } from "../../../../../services/index/DepartmentStat/MinorStatDetailsService";
 import ExportCSV from "../../../../input/ExportCSVDepartment";
 import { Button } from "@mui/material";
-import CachedIcon from "@mui/icons-material/Cached";
 import SearchAllRevisionByYearSpan from "./SearchAllRevisionByYearSpan";
 import {
   buildData,
@@ -35,7 +34,6 @@ const DashboardAllDepartmentIndexRevisionByYearSpan = () => {
     fetchAllCascadeByYear(yearStart, yearEnd);
     buildListYear(yearStart, yearEnd);
   }, [yearStart, yearEnd]);
-  const [years, setYears] = useState([]);
   const buildListYear = (yearStart, yearEnd) => {
     const yearStartNumber = +yearStart;
     const yearEndNumber = +yearEnd;
@@ -43,7 +41,6 @@ const DashboardAllDepartmentIndexRevisionByYearSpan = () => {
     for (let year = yearStartNumber; year <= yearEndNumber; year++) {
       newYears.push(year); // Chuyển đổi năm thành chuỗi trước khi thêm vào mảng
     }
-    setYears(newYears); // Cập nhật state years bằng mảng mới
   };
   const [groupedYearsByStatName, setGroupedYearsByStatName] = useState([]);
   const fetchAllCascadeByYear = async (yearStart, yearEnd) => {
@@ -111,15 +108,20 @@ const DashboardAllDepartmentIndexRevisionByYearSpan = () => {
   const handleDepartment = (item) => {
     history.push(`/department-index/${item.categoryId}`);
   };
+  const handleAllDepartmentIndexRevisionByYearSpan = () => {
+    history.push(
+      `/all-department-index-revision-by-year-span/${yearStart}/${yearEnd}`
+    );
+  };
   return (
     <>
-      <div className="container">
+      <div className="container mb-5">
         <h2 className="text-center text-primary mt-3">
           Biểu đồ chỉ số khoa/phòng trong nhiều năm
         </h2>
         <div className="row">
           {" "}
-          <span className="ms-lg-5 ps-lg-4">
+          <span className="ms-lg-2">
             <button className="btn btn-info" onClick={() => handleBack()}>
               <span>
                 <i className="fa-solid fa-rotate-left me-1"></i>
@@ -128,9 +130,9 @@ const DashboardAllDepartmentIndexRevisionByYearSpan = () => {
             </button>
           </span>
         </div>
-        <div className="row mt-lg-4 d-lg-flex  gap-lg-3">
+        <div className="row mt-lg-4 d-lg-flex">
           {" "}
-          <div className="col-lg-9 ps-lg-5 ms-lg-3 d-lg-flex ">
+          <div className="col-lg-10  d-lg-flex justify-content-end">
             <SearchAllRevisionByYearSpan
               yearStart={yearStart}
               yearEnd={yearEnd}
@@ -138,19 +140,31 @@ const DashboardAllDepartmentIndexRevisionByYearSpan = () => {
               setYearStart={setYearStart}
               setYearEnd={setYearEnd}
             />{" "}
-            <div className="col-lg-5 mt-1 ps-5 ms-5 d-flex align-items-center ">
-              <div className="ps-lg-5 ">
-                <Button
-                  variant="outlined"
-                  aria-label="outlined button group"
-                  onClick={() => {
-                    handleSearchYear();
-                  }}
-                >
-                  {" "}
-                  Tìm chỉ số trong một năm
-                </Button>
-              </div>
+            <div className="col-lg-4 mt-1 ps-lg-4 ms-lg-2 d-flex align-items-center ">
+              <Button
+                variant="outlined"
+                size="small"
+                aria-label="outlined button group"
+                onClick={() => {
+                  handleAllDepartmentIndexRevisionByYearSpan();
+                }}
+              >
+                {" "}
+                Danh sách khoa/phòng từ {yearStart} đến {yearEnd}
+              </Button>
+            </div>{" "}
+            <div className="col-lg-3 mt-1 ps-lg-2 ms-lg-2 d-flex align-items-center">
+              <Button
+                variant="outlined"
+                size="small"
+                aria-label="outlined button group"
+                onClick={() => {
+                  handleSearchYear();
+                }}
+              >
+                {" "}
+                Tìm chỉ số trong một năm
+              </Button>
             </div>
           </div>{" "}
           <div className="col-lg-2 d-flex justify-content-end align-items-center mt-2">
@@ -203,14 +217,7 @@ const DashboardAllDepartmentIndexRevisionByYearSpan = () => {
             </>
           ) : (
             <div className="h6 text-center text-secondary m-3">
-              Hiện tại chưa có chỉ số bệnh viện. Vui lòng tạo mới! Hoặc tải lại
-              trang{" "}
-              <button
-                onClick={() => handleReload()}
-                className="btn btn-primary"
-              >
-                <CachedIcon />
-              </button>
+              Hiện tại chưa có chỉ số bệnh viện. Vui lòng tạo mới!
             </div>
           )}
         </div>

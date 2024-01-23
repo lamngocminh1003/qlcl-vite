@@ -10,6 +10,14 @@ const ModalDeleteHospitalIndex = (props) => {
     dataRevision,
     MinorStatDetailsByStatId,
     indexId,
+    MinorStatDetailsByYear,
+    year,
+    yearStart,
+    yearEnd,
+    MinorStatDetailsByYearSpan,
+    departmentId,
+    MinorStatDetailsByYearAndCategory,
+    MinorStatDetailsByYearSpanAndCategory,
   } = props;
   const [isShowLoading, setIsShowLoading] = useState(false);
   const handleClose = () => {
@@ -24,7 +32,21 @@ const ModalDeleteHospitalIndex = (props) => {
         //success
         setShowDelete(false);
         toast.success("Xóa năm chỉ số thành công");
-        MinorStatDetailsByStatId(indexId);
+        if (indexId) {
+          MinorStatDetailsByStatId(indexId);
+        } else if (departmentId && yearStart && yearEnd) {
+          MinorStatDetailsByYearSpanAndCategory(
+            departmentId,
+            yearStart,
+            yearEnd
+          );
+        } else if (departmentId && year) {
+          MinorStatDetailsByYearAndCategory(departmentId, year);
+        } else if (year) {
+          MinorStatDetailsByYear(year);
+        } else if (yearStart && yearEnd) {
+          MinorStatDetailsByYearSpan(yearStart, yearEnd);
+        }
         setIsShowLoading(false);
       } else {
         toast.error("Xóa năm chỉ số không thành công");

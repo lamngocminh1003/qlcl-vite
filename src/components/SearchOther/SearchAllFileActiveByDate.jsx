@@ -13,7 +13,7 @@ const SearchAllFileActiveByDate = (props) => {
   };
   const handleSearch = async () => {
     if (!date) {
-      toast.error("Tìm kiếm thất bại.Vui lòng nhập từ khóa");
+      // toast.error("Tìm kiếm thất bại.Vui lòng nhập từ khóa");
       fetchAllFiles();
     } else if (moment(date).isValid()) {
       const selectedDate = moment(date);

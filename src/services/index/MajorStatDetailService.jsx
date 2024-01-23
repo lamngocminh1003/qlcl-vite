@@ -145,8 +145,23 @@ const UploadFile = (
       return error.response;
     });
 };
+const fetchAllMajorStatManifestByYearSpanService = (yearBegin, yearEnd) => {
+  let config = createConfig();
+  return axios
+    .get(
+      `${backendURL}/api/v1/MajorStatManifest/cascade/by-year-span?yearBegin=${yearBegin}&yearEnd=${yearEnd}`,
+      config
+    )
+    .then(function (response) {
+      return response;
+    })
+    .catch(function (error) {
+      return error.response;
+    });
+};
 export {
   fetchAllMajorStatDetailByStatAndYearService,
+  fetchAllMajorStatManifestByYearSpanService,
   createCascadeService,
   updateMajorStatDetailService,
   updateMajorStatManifestService,

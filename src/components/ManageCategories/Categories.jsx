@@ -138,7 +138,7 @@ const Categories = (props) => {
               title="Người dùng"
               className="btn btn-success"
             >
-              <ManageAccounts />{" "}
+              <ManageAccounts /> {params.row.usersCount}
             </button>
           </>
         );

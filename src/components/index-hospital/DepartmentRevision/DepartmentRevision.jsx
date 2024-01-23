@@ -17,7 +17,7 @@ import { updateMajorStatManifestService } from "../../../services/index/MajorSta
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import ModalUploadFile from "./ModalUploadFile";
 import { SortCategoryId } from "../Department/SortCategory";
-import { columnsIndex, columnDepartment } from "../../input/Column";
+import { columnsIndex, columnDepartmentName } from "../../input/Column";
 const DepartmentRevision = (props) => {
   const categoryId = localStorage.getItem("categoryId");
   const [showEdit, setShowEdit] = useState(false);
@@ -38,7 +38,7 @@ const DepartmentRevision = (props) => {
     setShowEditFileContent(true);
   };
   let history = useHistory();
-  const column1 = [...columnsIndex, ...columnDepartment];
+  const column1 = [...columnsIndex, ...columnDepartmentName];
   const columnActive = [
     {
       field: "active",

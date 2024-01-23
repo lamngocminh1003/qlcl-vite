@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   fetchAllFoldersByCategoryBlended,
   fetchAllFolders,
-  getFolderReferenceByFolderIdService,
 } from "../../services/folderService";
 import {
   getCategoryById,
@@ -55,8 +54,8 @@ const Folders = (props) => {
   const categoryIdLocalStorage = localStorage.getItem("categoryId");
   let history = useHistory();
   useEffect(() => {
-    fetchFoldersByCategoryId(categoryId, sortOption);
-  }, [categoryId, sortOption]);
+    fetchFoldersByCategoryId(categoryId);
+  }, [categoryId]);
   useEffect(() => {
     getCategoryByCategoryId(categoryId);
     getAllCategory();
@@ -92,11 +91,11 @@ const Folders = (props) => {
       }
     }
   }; // Hàm để ánh xạ categoryId sang categoryName
-  const fetchFoldersByCategoryId = async (categoryId, sortOption) => {
+  const fetchFoldersByCategoryId = async (categoryId) => {
     setIsLoading(true);
-    let res = await fetchAllFoldersByCategoryBlended(categoryId, sortOption);
-    if (res && res.data.references) {
-      res.data.references.sort((a, b) => {
+    let res = await fetchAllFoldersByCategoryBlended(categoryId);
+    if (res && res.data.folders) {
+      res.data.folders.sort((a, b) => {
         const idA = a.id.toUpperCase(); // Đảm bảo sắp xếp không phân biệt hoa thường
         const idB = b.id.toUpperCase();
         if (idA < idB) {
@@ -107,19 +106,8 @@ const Folders = (props) => {
         }
         return 0;
       });
-      const foldersData = res.data.references;
-      const folderReferences = await Promise.all(
-        foldersData.map(async (folder) => {
-          const referenceRes = await getFolderReferenceByFolderId(folder.id);
-          return referenceRes || null;
-        })
-      );
-      // Kết hợp dữ liệu thư mục gốc với các tham chiếu
-      const foldersWithReferences = foldersData.map((folder, index) => ({
-        ...folder,
-        references: folderReferences[index],
-      }));
-      const newData = foldersWithReferences.map((item) => ({
+      const foldersData = res.data.folders;
+      const newData = foldersData.map((item) => ({
         ...item,
         referencesName: item.references
           .map((ref) => ref.categoryName)
@@ -129,14 +117,6 @@ const Folders = (props) => {
       setIsLoading(false);
     }
     setIsLoading(false);
-  };
-  const getFolderReferenceByFolderId = async (folderId) => {
-    setIsLoading(true);
-    let res = await getFolderReferenceByFolderIdService(folderId);
-    if (res && res.data.references) {
-      setIsLoading(false);
-      return res.data.references;
-    }
   };
   const getCategoryByCategoryId = async (categoryId) => {
     let res = await getCategoryById(categoryId);
@@ -192,7 +172,13 @@ const Folders = (props) => {
               title="Tài liệu hiệu lực"
               className="btn btn-success"
             >
-              <FolderOpenIcon />
+              {categoryIdLocalStorage == 1 ? (
+                <>
+                  <FolderOpenIcon /> {params.row.activeFilesCount}
+                </>
+              ) : (
+                <FolderOpenIcon />
+              )}
             </button>
           </>
         );
@@ -215,7 +201,7 @@ const Folders = (props) => {
               title="Tài liệu hết hiệu lực"
               className="btn btn-secondary"
             >
-              <FolderOffIcon />
+              <FolderOffIcon /> {params.row.inactiveRevisionsCount}
             </button>
           </>
         );
@@ -268,11 +254,17 @@ const Folders = (props) => {
   const columnAdmin = [
     ...columnInfoFolder,
     {
-      field: "originalCategoryName",
+      field: "referencingFrom",
       headerName: "Thư mục gốc",
       cellClassName: "name-column--cell",
       renderCell: renderCellExpand,
       minWidth: 120,
+      valueGetter: (params) => {
+        if (params?.row?.referencingFrom?.categoryName) {
+          return params?.row?.referencingFrom?.categoryName; // Trả về ngày đã định dạng
+        }
+        return ""; // Hoặc giá trị mặc định khi không có ngày
+      },
     },
     {
       field: "Tham chiếu",
@@ -288,7 +280,7 @@ const Folders = (props) => {
               variant="outlined"
               title={params.row.referencesName}
             >
-              <CopyAllIcon />
+              <CopyAllIcon /> {params.row.references.length}
             </Button>
           </>
         );
@@ -309,6 +301,7 @@ const Folders = (props) => {
             title={params?.row?.referencesName}
           >
             <SignalCellularNoSimOutlinedIcon />
+            {params.row.references.length}
           </Button>
         ) : null; // Trả về null nếu không có references
       },

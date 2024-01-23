@@ -28,7 +28,7 @@ import { useHistory } from "react-router-dom";
 import {
   columnsIndex,
   columnStatName,
-  columnDepartment,
+  columnDepartmentName,
   columnUnit,
   columnUnapprovedManifestCount,
 } from "../../../input/Column";
@@ -207,7 +207,7 @@ const IndexFromDepartment = (props) => {
   const columnAd = [
     ...columnsIndex,
     ...columnStatName,
-    ...columnDepartment,
+    ...columnDepartmentName,
     ...columnUnit,
     ...columnUnapprovedManifestCount,
     ...columnViewMinorDetail,
@@ -217,7 +217,7 @@ const IndexFromDepartment = (props) => {
   const columns = [
     ...columnsIndex,
     ...columnStatName,
-    ...columnDepartment,
+    ...columnDepartmentName,
     ...columnUnit,
     ...columnViewMinorDetail,
     ...columnEdit,

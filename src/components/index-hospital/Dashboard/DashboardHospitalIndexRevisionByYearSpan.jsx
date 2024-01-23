@@ -5,7 +5,6 @@ import { Oval } from "react-loader-spinner";
 import { fetchAllCascadeBySpanYearService } from "../../../services/index/MajorStatDetailService";
 import ExportCSV from "../../input/ExportCSV";
 import { Button } from "@mui/material";
-import CachedIcon from "@mui/icons-material/Cached";
 import "../../../App.scss";
 import SearchAllRevisionByYearSpan from "./SearchAllRevisionByYearSpan";
 import GroupedBarChart from "./GroupedBarChart "; // Thay đường dẫn này bằng đường dẫn tới component của bạn
@@ -28,7 +27,6 @@ const DashboardHospitalIndexRevisionByYearSpan = () => {
     fetchAllCascadeByYear(yearStart, yearEnd);
     buildListYear(yearStart, yearEnd);
   }, [yearStart, yearEnd]);
-  const [years, setYears] = useState([]);
   const buildListYear = (yearStart, yearEnd) => {
     const yearStartNumber = +yearStart;
     const yearEndNumber = +yearEnd;
@@ -36,7 +34,6 @@ const DashboardHospitalIndexRevisionByYearSpan = () => {
     for (let year = yearStartNumber; year <= yearEndNumber; year++) {
       newYears.push(year); // Chuyển đổi năm thành chuỗi trước khi thêm vào mảng
     }
-    setYears(newYears); // Cập nhật state years bằng mảng mới
   };
   const adjustAverage = (data) => {
     const requiredKeys = ["Q1", "Q2", "Q3", "Q4"];
@@ -153,9 +150,14 @@ const DashboardHospitalIndexRevisionByYearSpan = () => {
   const handleSearchYear = () => {
     history.push(`/hospital-index-revision-by-year`);
   };
+  const handleHospitalIndexRevisionByYearSpan = () => {
+    history.push(
+      `/hospital-index-revision-by-year-span/${yearStart}/${yearEnd}`
+    );
+  };
   return (
     <>
-      <div className="container">
+      <div className="container mb-5">
         <h2 className="text-center text-primary mt-3">
           Biểu đồ chỉ số bệnh viện trong nhiều năm
         </h2>
@@ -170,7 +172,7 @@ const DashboardHospitalIndexRevisionByYearSpan = () => {
             </button>
           </span>
         </div>
-        <div className="row mt-lg-4 d-lg-flex  gap-lg-3">
+        <div className="row mt-lg-4 d-lg-flex gap-lg-3">
           {" "}
           <div className="col-lg-9 ps-lg-5 ms-lg-3 d-lg-flex ">
             <SearchAllRevisionByYearSpan
@@ -180,19 +182,33 @@ const DashboardHospitalIndexRevisionByYearSpan = () => {
               setYearStart={setYearStart}
               setYearEnd={setYearEnd}
             />{" "}
-            <div className="col-lg-5 mt-1 ps-5 ms-5 d-flex align-items-center ">
-              <div className="ps-lg-5 ">
+            <div className="col-lg-4 mt-1 ps-lg-4 ms-lg-2 d-flex align-items-center ">
+              <div>
                 <Button
                   variant="outlined"
+                  size="small"
                   aria-label="outlined button group"
                   onClick={() => {
-                    handleSearchYear();
+                    handleHospitalIndexRevisionByYearSpan();
                   }}
                 >
                   {" "}
-                  Tìm chỉ số trong một năm
+                  Danh sách chỉ số từ {yearStart} đến {yearEnd}
                 </Button>
               </div>
+            </div>{" "}
+            <div className="col-lg-3 mt-1 ps-lg-2 ms-lg-2 d-flex align-items-center ">
+              <Button
+                variant="outlined"
+                size="small"
+                aria-label="outlined button group"
+                onClick={() => {
+                  handleSearchYear();
+                }}
+              >
+                {" "}
+                Tìm chỉ số trong một năm
+              </Button>
             </div>
           </div>{" "}
           <div className="col-lg-2 d-flex justify-content-end align-items-center mt-2">
@@ -235,14 +251,7 @@ const DashboardHospitalIndexRevisionByYearSpan = () => {
             </>
           ) : (
             <div className="h6 text-center text-secondary m-3">
-              Hiện tại chưa có chỉ số bệnh viện. Vui lòng tạo mới! Hoặc tải lại
-              trang{" "}
-              <button
-                onClick={() => handleReload()}
-                className="btn btn-primary"
-              >
-                <CachedIcon />
-              </button>
+              Hiện tại chưa có chỉ số bệnh viện. Vui lòng tạo mới!
             </div>
           )}
         </div>

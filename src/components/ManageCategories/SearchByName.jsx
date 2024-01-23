@@ -23,7 +23,7 @@ const SearchByName = (props) => {
         setListCategories(res.data.categories);
       }
     } catch (error) {
-      toast.error("Tìm kiếm thất bại");
+      // toast.error("Tìm kiếm thất bại");
     }
   };
   return (

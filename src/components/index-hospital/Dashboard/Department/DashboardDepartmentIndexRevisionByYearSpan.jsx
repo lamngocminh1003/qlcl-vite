@@ -48,7 +48,6 @@ const DashboardDepartmentIndexRevisionByYearSpan = (props) => {
   useEffect(() => {
     buildListYear(yearStart, yearEnd);
   }, [yearStart, yearEnd]);
-  const [years, setYears] = useState([]);
   const buildListYear = (yearStart, yearEnd) => {
     const yearStartNumber = +yearStart;
     const yearEndNumber = +yearEnd;
@@ -56,7 +55,6 @@ const DashboardDepartmentIndexRevisionByYearSpan = (props) => {
     for (let year = yearStartNumber; year <= yearEndNumber; year++) {
       newYears.push(year); // Chuyển đổi năm thành chuỗi trước khi thêm vào mảng
     }
-    setYears(newYears); // Cập nhật state years bằng mảng mới
   };
   const [groupedYearsByStatName, setGroupedYearsByStatName] = useState([]);
   const fetchAllCascadeByYear = async (departmentId, yearStart, yearEnd) => {
@@ -128,9 +126,14 @@ const DashboardDepartmentIndexRevisionByYearSpan = (props) => {
   const handleDepartment = (item) => {
     history.push(`/department-index/${item.categoryId}`);
   };
+  const handleDepartmentIndexRevisionByYearSpan = () => {
+    history.push(
+      `/department-index-revision-by-year/${departmentId}/${yearStart}/${yearEnd}`
+    );
+  };
   return (
     <>
-      <div className="container">
+      <div className="container mb-5">
         <h2 className="text-center text-primary mt-3">
           Biểu đồ chỉ số{" "}
           <span className="text-warning me-1">{categoryData.categoryName}</span>
@@ -147,9 +150,9 @@ const DashboardDepartmentIndexRevisionByYearSpan = (props) => {
             </button>
           </span>
         </div>
-        <div className="row mt-4 d-flex  gap-3">
+        <div className="row mt-lg-4 d-lg-flex gap-lg-3">
           {" "}
-          <div className="col-lg-9 ps-5 ms-3 d-flex ">
+          <div className="col-lg-9 ps-lg-5 ms-lg-3 d-lg-flex  ">
             <SearchAllRevisionByYearSpan
               yearStart={yearStart}
               yearEnd={yearEnd}
@@ -157,10 +160,26 @@ const DashboardDepartmentIndexRevisionByYearSpan = (props) => {
               setYearStart={setYearStart}
               setYearEnd={setYearEnd}
             />{" "}
-            <div className="col-lg-5 mt-1 ps-5 ms-5 d-flex align-items-center ">
-              <div className="ps-5 ">
+            <div className="col-lg-4 mt-1 ps-lg-4 ms-lg-2 d-flex align-items-center ">
+              <div>
                 <Button
                   variant="outlined"
+                  size="small"
+                  aria-label="outlined button group"
+                  onClick={() => {
+                    handleDepartmentIndexRevisionByYearSpan();
+                  }}
+                >
+                  {" "}
+                  Danh sách chỉ số từ {yearStart} đến {yearEnd}
+                </Button>
+              </div>
+            </div>{" "}
+            <div className="col-lg-3 mt-1 ps-lg-2 ms-lg-2 d-flex align-items-center ">
+              <div>
+                <Button
+                  variant="outlined"
+                  size="small"
                   aria-label="outlined button group"
                   onClick={() => {
                     handleSearchYear();

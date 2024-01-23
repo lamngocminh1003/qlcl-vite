@@ -25,7 +25,7 @@ const fetchAllFoldersByCategory = (id, sortOption) => {
 const fetchAllFoldersByCategoryBlended = (categoryId) => {
   const token = localStorage.getItem("token");
   return axios.get(
-    `${backendURL}/api/v1/FolderReference/by-category/blended?categoryId=${categoryId}`,
+    `${backendURL}/api/v1/Folder/by-category-id/rectified?id=${categoryId}&sortOption=5`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -36,11 +36,14 @@ const fetchAllFoldersByCategoryBlended = (categoryId) => {
 const fetchAllFolders = (sortOption) => {
   const token = localStorage.getItem("token");
 
-  return axios.get(`${backendURL}/api/v1/Folder/all?sortOption=${sortOption}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  return axios.get(
+    `${backendURL}/api/v1/Folder/all/rectified?sortOption=${sortOption}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 };
 const createNewFolder = (id, folderName, categoryId) => {
   let config = createConfig();

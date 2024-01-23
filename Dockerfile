@@ -14,8 +14,8 @@ RUN npm install
 COPY . .
 
 ENV NODE_ENV production
-ENV VITE_BACKEND_URL
- http://192.168.0.126:8081
+ENV VITE_NODE_ENV production
+ENV VITE_BACKEND_URL http://192.168.0.126:8081
 
 # Build the React app
 RUN npm run build
@@ -26,7 +26,7 @@ FROM nginx:1.25.3-alpine-slim
 COPY conf/default.conf /etc/nginx/conf.d
 
 # Copy the built React app to the Nginx HTML root directory
-COPY --from=build /app/build /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80

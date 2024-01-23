@@ -14,7 +14,7 @@ const ModalAddNewHospitalIndex = (props) => {
     setSelectedUnit(event.target.value);
     // Thực hiện các hành động cần thiết khi giá trị được chọn thay đổi
   };
-  let { fetchListMajorStats } = props;
+  let { fetchListMajorStatsAndManifest } = props;
   const handlePressEnter = (event) => {
     if (event && event.keyCode === 13) {
       handleOnClickAdd();
@@ -38,7 +38,7 @@ const ModalAddNewHospitalIndex = (props) => {
       setShow(false);
       setStatName("");
       toast.success("Thêm mới chỉ số thành công!");
-      fetchListMajorStats();
+      fetchListMajorStatsAndManifest();
     }
     setIsShowLoading(false);
   };

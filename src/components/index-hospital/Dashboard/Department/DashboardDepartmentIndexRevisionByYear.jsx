@@ -104,9 +104,12 @@ const DashboardDepartmentIndexRevisionByYear = (props) => {
   const handleBack = () => {
     history.push(`/department-index/${departmentId}`);
   };
+  const handleDepartmentIndexRevisionByYear = () => {
+    history.push(`/department-index-revision-by-year/${departmentId}/${year}`);
+  };
   return (
     <>
-      <div className="container">
+      <div className="container mb-5">
         <h2 className="text-center text-primary mt-3">
           Biểu đồ chỉ số{" "}
           <span className="text-warning me-1">{categoryData.categoryName}</span>
@@ -130,19 +133,31 @@ const DashboardDepartmentIndexRevisionByYear = (props) => {
               fetchAllCascadeByYear={fetchAllCascadeByYear}
               setYear={setYear}
             />
-            <div className="col-lg-9 mt-lg-1 ps-lg-5 ms-lg-5">
-              <div className=" ps-lg-5 ">
-                <Button
-                  variant="outlined"
-                  aria-label="outlined button group"
-                  onClick={() => {
-                    handleSearchYearSpan();
-                  }}
-                >
-                  {" "}
-                  Tìm chỉ số trong nhiều năm
-                </Button>
-              </div>
+            <div className="col-lg-4 mt-lg-1 ms-lg-5 ">
+              <Button
+                size="small"
+                variant="outlined"
+                aria-label="outlined button group"
+                onClick={() => {
+                  handleDepartmentIndexRevisionByYear();
+                }}
+              >
+                {" "}
+                Danh sách chỉ số {categoryData.categoryName} trong năm {year}
+              </Button>
+            </div>
+            <div className="col-lg-4 mt-lg-1 ms-lg-5 ps-1">
+              <Button
+                size="small"
+                variant="outlined"
+                aria-label="outlined button group"
+                onClick={() => {
+                  handleSearchYearSpan();
+                }}
+              >
+                {" "}
+                Tìm chỉ số trong nhiều năm
+              </Button>
             </div>
           </div>{" "}
           <div className="col-lg-2 d-flex justify-content-end">
@@ -161,13 +176,37 @@ const DashboardDepartmentIndexRevisionByYear = (props) => {
                 return (
                   <>
                     <div className="col-12 col-lg-4">
-                      <Dashboard
-                        data={item}
-                        key={`dashboard-${index}`}
-                        index={index}
-                        handleDepartment={handleDepartment}
-                        handleDepartmentRevision={handleDepartmentRevision}
-                      />
+                      {" "}
+                      <div className="mt-5">
+                        {" "}
+                        <div>
+                          <h5 className="ps-5 text-center">
+                            <span
+                              onClick={() => handleDepartment(item)}
+                              className="department  underline-opening-success"
+                            >
+                              {item.categoryName}
+                            </span>
+                          </h5>
+                        </div>
+                        <Dashboard
+                          data={item}
+                          key={`dashboard-${index}`}
+                          index={index}
+                          handleDepartment={handleDepartment}
+                          handleDepartmentRevision={handleDepartmentRevision}
+                        />
+                      </div>{" "}
+                      <div>
+                        <h6 className="ps-5  text-center ">
+                          <span
+                            className="department  underline-opening"
+                            onClick={() => handleDepartmentRevision(item)}
+                          >
+                            Bảng {index + 1}: {item.statName}
+                          </span>
+                        </h6>
+                      </div>
                     </div>
                   </>
                 );

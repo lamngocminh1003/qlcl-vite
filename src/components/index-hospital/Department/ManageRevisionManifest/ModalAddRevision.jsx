@@ -31,7 +31,7 @@ const ModalAddRevision = (props) => {
     effectiveYear,
     categoryId,
     repoHash,
-    departmentId,
+    MinorStatDetailsByStatId,
   } = props;
   const initialValues = {
     targetNumber: "",
@@ -70,6 +70,7 @@ const ModalAddRevision = (props) => {
         setShow(false);
         toast.success("Thêm mới phiên bản và duyệt thành công!");
         MinorStatManifestByStatAndYear(indexId, effectiveYear);
+        MinorStatDetailsByStatId(indexId);
         setIsShowLoadingForAd(false);
       }
     } catch (error) {
