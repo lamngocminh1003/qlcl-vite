@@ -26,15 +26,11 @@ const ModalAddNewCategory = (props) => {
     }
     let res = await createNewCategory(categoryName, defaultFilePermission);
     setIsShowLoading(true);
-
     if (res && res.data.id) {
       //success
       setShow(false);
       setCategoryName("");
       toast.success("Thêm mới thư mục thành công!");
-      handleUpdateTable({
-        categoryName: categoryName,
-      });
       fetchCategories();
     }
     setIsShowLoading(false);

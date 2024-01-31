@@ -1,26 +1,42 @@
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import ScrollToTopButton from "../../../input/ScrollToTopButton";
-import { Oval } from "react-loader-spinner";
 import { MinorStatDetailsByCategoryIdAndYearSpanService } from "../../../../services/index/DepartmentStat/MinorStatDetailsService";
 import ExportCSVDepartment from "../../../input/ExportCSVDepartment";
 import { Button } from "@mui/material";
 import SearchAllRevisionByYearSpan from "./SearchAllRevisionByYearSpan";
 import GroupedBarChart from "./AllDepartment/GroupedBarChart ";
-import { SortCategoryId } from "../../Department/SortCategory";
-import { getCategoryById } from "../../../../services/categoryService";
+import {
+  SortCategoryId,
+  SortCategoryIdById,
+} from "../../Department/SortCategory";
+import {
+  getCategoryById,
+  fetchAllCategories,
+} from "../../../../services/categoryService";
 import "../../../../App.scss";
 import {
   buildData,
   buildDataGroupYearDepartment,
-} from "../../Department/BuildData"; // Thay đường dẫn này bằng đường dẫn tới component của bạn
+  buildDataCategoryPieChart,
+  countYear,
+  buildDataPieChart,
+} from "../../Department/BuildData";
+import BasicCard from "../Cart";
+import RechartsPieChart from "../PieChart";
+import AreaChartQuarter from "../AreaChart"; // Thay đường dẫn này bằng đường dẫn tới component của bạn
 const DashboardDepartmentIndexRevisionByYearSpan = (props) => {
-  const [yearStart, setYearStart] = useState(new Date().getFullYear() - 1);
-  const [yearEnd, setYearEnd] = useState(new Date().getFullYear());
+  const [yearStart, setYearStart] = useState(localStorage.getItem("yearStart"));
+  const [yearEnd, setYearEnd] = useState(localStorage.getItem("yearEnd"));
   const [isLoading, setIsLoading] = useState(false);
   const [listCascadeByYear, setListCascadeByYear] = useState("");
   const [departmentId, setDepartmentId] = useState("");
   const [categoryData, setCategoryData] = useState("");
+  const [dataAreaChart, setDataAreaChart] = useState([]);
+  const titleTotalMinorStat = `Số chỉ số`;
+  const [dataPieChart, setDataPieChart] = useState([]);
+  const [totalMinorStat, setTotalMinorStat] = useState("");
+  const [listCategories, setListCategories] = useState([]);
   useEffect(() => {
     if (props.match && props.match.params && props.match.params.id) {
       let id = props.match.params.id;
@@ -36,6 +52,18 @@ const DashboardDepartmentIndexRevisionByYearSpan = (props) => {
   useEffect(() => {
     getCategoryByCategoryId(departmentId);
   }, [departmentId]);
+  const fetchCategories = async () => {
+    try {
+      setIsLoading(true);
+      let res = await fetchAllCategories();
+      if (res.data.categories) {
+        let categoryData = res.data.categories;
+        return categoryData;
+      }
+    } catch (error) {
+      setIsLoading(false);
+    }
+  };
   const getCategoryByCategoryId = async (departmentId) => {
     let res = await getCategoryById(departmentId);
     if (res && res.data.categoryName) {
@@ -68,18 +96,38 @@ const DashboardDepartmentIndexRevisionByYearSpan = (props) => {
       if (res?.data?.minorStatDetails) {
         if (res.data.minorStatDetails.length > 0) {
           let uniqueArray = await buildData(res?.data?.minorStatDetails);
+          const categoryData = await fetchCategories();
+          await SortCategoryIdById(categoryData);
           await SortCategoryId(uniqueArray);
           setListCascadeByYear(uniqueArray);
-          const groupedArrayByStatId = await buildDataGroupYearDepartment(
-            uniqueArray
-          );
+          const groupedArrayByStatId =
+            buildDataGroupYearDepartment(uniqueArray);
+          let dataPieChart = buildDataPieChart(uniqueArray);
+          setDataPieChart(dataPieChart);
+          const newArray = categoryData.map((item) => ({
+            categoryId: item.id,
+            categoryName: item.categoryName, // Nếu categoryId giống id, nếu khác, hãy thay đổi giá trị tương ứng
+            value: "",
+            statName: [],
+          }));
+          setTotalMinorStat(groupedArrayByStatId.length);
           setGroupedYearsByStatName(groupedArrayByStatId);
+          let dataYear = countYear(uniqueArray);
+          setDataAreaChart(dataYear);
+          let dataCategory = buildDataCategoryPieChart(
+            groupedArrayByStatId,
+            newArray
+          );
+          setListCategories(dataCategory);
           setIsLoading(false);
           return 1;
         } else {
           // Nếu minorStatDetails là mảng rỗng
           setIsLoading(false);
           setListCascadeByYear([]);
+          setDataAreaChart([]);
+          setTotalMinorStat("");
+          setDataPieChart([]);
           return -1;
         }
       }
@@ -97,26 +145,7 @@ const DashboardDepartmentIndexRevisionByYearSpan = (props) => {
   const handleReload = () => {
     window.location.reload(); // Tải lại trang
   };
-  if (isLoading) {
-    return (
-      <div className="loading">
-        {" "}
-        <Oval
-          height={80}
-          width={80}
-          color="#51e5ff"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-          ariaLabel="oval-loading"
-          secondaryColor="#429ea6"
-          strokeWidth={2}
-          strokeWidthSecondary={2}
-        />
-        <div className="text">Loading....</div>
-      </div>
-    );
-  }
+
   const handleSearchYear = () => {
     history.push(`/department-index-revision-by-year/${departmentId}`);
   };
@@ -198,6 +227,28 @@ const DashboardDepartmentIndexRevisionByYearSpan = (props) => {
               yearEnd={yearEnd}
             />
           </div>
+        </div>
+        <div className="row mt-3 ms-lg-5">
+          <span className="col-lg-2 col-6 d-flex align-items-center">
+            {" "}
+            <BasicCard
+              title={titleTotalMinorStat}
+              majorCount={totalMinorStat}
+            />{" "}
+          </span>
+          <span className="col-lg-2 col-6 d-flex align-items-center">
+            {" "}
+            {dataPieChart && dataPieChart.length > 0 && (
+              <RechartsPieChart dataPieChart={dataPieChart} />
+            )}{" "}
+          </span>
+          <span className="col-lg-4 col-12">
+            <row>
+              {dataAreaChart && dataAreaChart.length > 0 && (
+                <AreaChartQuarter dataCountQuarter={dataAreaChart} />
+              )}{" "}
+            </row>
+          </span>
         </div>
         <div className="row">
           {listCascadeByYear && listCascadeByYear.length > 0 ? (

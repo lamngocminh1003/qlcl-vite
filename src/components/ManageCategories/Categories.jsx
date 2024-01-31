@@ -6,7 +6,6 @@ import SearchOther from "../SearchOther/SearchOther";
 import ModalDeleteCategory from "./ModalDeleteCategory";
 import { useHistory } from "react-router-dom";
 import SearchByName from "./SearchByName";
-import { Oval } from "react-loader-spinner";
 import ScrollToTopButton from "../input/ScrollToTopButton";
 import { columnsIndex } from "../input/Column";
 import {
@@ -20,7 +19,7 @@ import {
 } from "@mui/x-data-grid";
 import { Box } from "@mui/material";
 import { Edit, Delete, ManageAccounts, Folder } from "@mui/icons-material";
-const Categories = (props) => {
+const Categories = () => {
   const [pageSize, setPageSize] = useState(10);
   const [listCategories, setListCategories] = useState([]);
   const [showEdit, setShowEdit] = useState(false);
@@ -44,17 +43,7 @@ const Categories = (props) => {
       }
     } catch (error) {
       setIsLoading(false);
-      return (
-        <>
-          <button onClick={() => handleReload()} className="btn btn-primary">
-            Vui lòng reload lại trang
-          </button>
-        </>
-      );
     }
-  };
-  const handleReload = () => {
-    window.location.reload(); // Tải lại trang
   };
   const handleEditCategory = (category) => {
     setShowEdit(true);
@@ -191,26 +180,6 @@ const Categories = (props) => {
     },
   ];
 
-  if (isLoading) {
-    return (
-      <div className="loading">
-        {" "}
-        <Oval
-          height={80}
-          width={80}
-          color="#51e5ff"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-          ariaLabel="oval-loading"
-          secondaryColor="#429ea6"
-          strokeWidth={2}
-          strokeWidthSecondary={2}
-        />
-        <div className="text">Loading....</div>
-      </div>
-    );
-  }
   function CustomToolbar() {
     return (
       <GridToolbarContainer>
@@ -241,7 +210,7 @@ const Categories = (props) => {
         dataCategories={dataCategories}
         handleDeleteFromModal={handleDeleteFromModal}
       />
-      {!isLoading && (
+      {!false && (
         <div className="category-header">
           {categoryId == 1 ? (
             <div className="h1 text-center text-primary m-3 px-md-5 px-3">

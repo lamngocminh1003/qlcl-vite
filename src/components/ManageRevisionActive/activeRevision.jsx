@@ -4,7 +4,6 @@ import { fetchFileActiveByFolderIdService } from "../../services/fileService";
 import ModalEditRevision from "./ModalEditRevision";
 import ModalAddRevision from "./ModalAddRevision";
 import { useHistory } from "react-router-dom";
-import { Oval } from "react-loader-spinner";
 import { format } from "date-fns"; // Import thư viện định dạng ngày tháng
 import { getFolderInfoByFolderIdService } from "../../services/folderService";
 import ScrollToTopButton from "../input/ScrollToTopButton";
@@ -177,26 +176,6 @@ const ActiveRevision = (props) => {
   const handleUpdateTable = (revision) => {
     setListRevisions([revision, ...listRevisions]);
   };
-  if (isLoading) {
-    return (
-      <div className="loading">
-        {" "}
-        <Oval
-          height={80}
-          width={80}
-          color="#51e5ff"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-          ariaLabel="oval-loading"
-          secondaryColor="#429ea6"
-          strokeWidth={2}
-          strokeWidthSecondary={2}
-        />
-        <div className="text">Loading....</div>
-      </div>
-    );
-  }
   function CustomToolbar() {
     return (
       <GridToolbarContainer>

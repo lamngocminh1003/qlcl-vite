@@ -80,6 +80,8 @@ const SearchAllRevisionByYearSpan = (props) => {
   const handleSearch = async (values) => {
     setYearStart(values.yearStart);
     setYearEnd(values.yearEnd);
+    localStorage.setItem("yearStart", values.yearStart);
+    localStorage.setItem("yearEnd", values.yearEnd);
   };
   return (
     <>

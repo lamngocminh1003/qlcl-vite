@@ -53,11 +53,26 @@ const updateMajorStatDetailService = (
 };
 const updateMajorStatManifestService = (cascadeId, categoryId, active) => {
   let config = createConfig();
-
   return axios.patch(
     `${backendURL}/api/v1/MajorStatManifest?cascadeId=${cascadeId}&categoryId=${categoryId}`,
     {
       active,
+    },
+    config
+  );
+};
+const updateMajorStatManifestOverrideService = (
+  statId,
+  effectiveYear,
+  categoryId
+) => {
+  let config = createConfig();
+  return axios.patch(
+    `${backendURL}/api/v1/MajorStatManifest/override?statId=${statId}&effectiveYear=${effectiveYear}&categoryId=${categoryId}`,
+    {
+      statId,
+      effectiveYear,
+      categoryId,
     },
     config
   );
@@ -171,4 +186,5 @@ export {
   fetchAllCascadeBySpanYearService,
   UploadFile,
   fetchAllCascadeByStatService,
+  updateMajorStatManifestOverrideService,
 };

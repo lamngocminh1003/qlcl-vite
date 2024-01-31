@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import ScrollToTopButton from "../../../../input/ScrollToTopButton";
-import { Oval } from "react-loader-spinner";
 import { MinorStatDetailsByYearSpanService } from "../../../../../services/index/DepartmentStat/MinorStatDetailsService";
 import ExportCSV from "../../../../input/ExportCSVDepartment";
 import { Button } from "@mui/material";
@@ -9,27 +8,37 @@ import SearchAllRevisionByYearSpan from "./SearchAllRevisionByYearSpan";
 import {
   buildData,
   buildDataGroupYearDepartment,
+  buildDataCategoryPieChart,
+  countYear,
+  buildDataPieChart,
 } from "../../../Department/BuildData";
+import {
+  SortCategoryIdById,
+  SortCategoryId,
+} from "../../../Department/SortCategory";
 import "../../../../../App.scss";
-import { SortCategoryId } from "../../../Department/SortCategory";
+import TableDepartment from "./TableDepartment";
+import { fetchAllCategories } from "../../../../../services/categoryService";
+import BasicCard from "../../Cart";
+import RechartsPieChart from "../../PieChart";
+import AreaChartQuarter from "../../AreaChart";
 import GroupedBarChart from "./GroupedBarChart "; // Thay đường dẫn này bằng đường dẫn tới component của bạn
 const DashboardAllDepartmentIndexRevisionByYearSpan = () => {
-  const [yearStart, setYearStart] = useState("");
-  const [yearEnd, setYearEnd] = useState("");
+  const [yearStart, setYearStart] = useState(localStorage.getItem("yearStart"));
+  const [yearEnd, setYearEnd] = useState(localStorage.getItem("yearEnd"));
   const [isLoading, setIsLoading] = useState(false);
   const [listCascadeByYear, setListCascadeByYear] = useState("");
+  const [dataAreaChart, setDataAreaChart] = useState([]);
+  const titleTotalMinorStat = `Số chỉ số`;
+  const [dataPieChart, setDataPieChart] = useState([]);
+  const [totalMinorStat, setTotalMinorStat] = useState("");
+  const [listCategories, setListCategories] = useState([]);
   let history = useHistory();
   const handleDepartmentRevision = (item) => {
     history.push(
       `/department-index-revision/${item.statId}/${item.categoryId}`
     );
   };
-  useEffect(() => {
-    const currentYear = new Date().getFullYear();
-    const previousYear = currentYear - 1; // Lấy năm trước đó
-    setYearStart(previousYear.toString());
-    setYearEnd(currentYear.toString());
-  }, []); // [] ensures that this effect runs only once after the component mounts
   useEffect(() => {
     fetchAllCascadeByYear(yearStart, yearEnd);
     buildListYear(yearStart, yearEnd);
@@ -42,6 +51,18 @@ const DashboardAllDepartmentIndexRevisionByYearSpan = () => {
       newYears.push(year); // Chuyển đổi năm thành chuỗi trước khi thêm vào mảng
     }
   };
+  const fetchCategories = async () => {
+    try {
+      setIsLoading(true);
+      let res = await fetchAllCategories();
+      if (res.data.categories) {
+        let categoryData = res.data.categories;
+        return categoryData;
+      }
+    } catch (error) {
+      setIsLoading(false);
+    }
+  };
   const [groupedYearsByStatName, setGroupedYearsByStatName] = useState([]);
   const fetchAllCascadeByYear = async (yearStart, yearEnd) => {
     try {
@@ -51,17 +72,40 @@ const DashboardAllDepartmentIndexRevisionByYearSpan = () => {
         if (res.data.minorStatDetails.length > 0) {
           let uniqueArray = await buildData(res?.data?.minorStatDetails);
           await SortCategoryId(uniqueArray);
+
           setListCascadeByYear(uniqueArray);
-          const groupedArrayByStatId = await buildDataGroupYearDepartment(
-            uniqueArray
-          );
+          const categoryData = await fetchCategories();
+          await SortCategoryIdById(categoryData);
+          await SortCategoryId(uniqueArray);
+          const groupedArrayByStatId =
+            buildDataGroupYearDepartment(uniqueArray);
+          let dataPieChart = buildDataPieChart(uniqueArray);
+          setDataPieChart(dataPieChart);
+          const newArray = categoryData.map((item) => ({
+            categoryId: item.id,
+            categoryName: item.categoryName, // Nếu categoryId giống id, nếu khác, hãy thay đổi giá trị tương ứng
+            value: "",
+            statName: [],
+          }));
+          setTotalMinorStat(groupedArrayByStatId.length);
           setGroupedYearsByStatName(groupedArrayByStatId);
+          let dataYear = countYear(uniqueArray);
+          setDataAreaChart(dataYear);
+          let dataCategory = buildDataCategoryPieChart(
+            groupedArrayByStatId,
+            newArray
+          );
+          setListCategories(dataCategory);
           setIsLoading(false);
           return 1;
         } else {
           // Nếu minorStatDetails là mảng rỗng
           setIsLoading(false);
           setListCascadeByYear([]);
+          setDataAreaChart([]);
+          setTotalMinorStat("");
+          setDataPieChart([]);
+          setListCategories([]);
           return -1;
         }
       }
@@ -79,26 +123,7 @@ const DashboardAllDepartmentIndexRevisionByYearSpan = () => {
   const handleReload = () => {
     window.location.reload(); // Tải lại trang
   };
-  if (isLoading) {
-    return (
-      <div className="loading">
-        {" "}
-        <Oval
-          height={80}
-          width={80}
-          color="#51e5ff"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-          ariaLabel="oval-loading"
-          secondaryColor="#429ea6"
-          strokeWidth={2}
-          strokeWidthSecondary={2}
-        />
-        <div className="text">Loading....</div>
-      </div>
-    );
-  }
+
   const handleSearchYear = () => {
     history.push(`/all-department-index-revision-by-year`);
   };
@@ -174,6 +199,33 @@ const DashboardAllDepartmentIndexRevisionByYearSpan = () => {
               yearEnd={yearEnd}
             />
           </div>
+        </div>{" "}
+        <div className="row mt-3 ms-lg-1">
+          <span className="col-lg-2 col-6 d-flex align-items-center">
+            {" "}
+            <BasicCard
+              title={titleTotalMinorStat}
+              majorCount={totalMinorStat}
+            />{" "}
+          </span>
+          <span className="col-lg-2 col-6 d-flex align-items-center">
+            {" "}
+            {dataPieChart && dataPieChart.length > 0 && (
+              <RechartsPieChart dataPieChart={dataPieChart} />
+            )}{" "}
+          </span>
+          <span className="col-lg-4 col-12">
+            <row>
+              {dataAreaChart && dataAreaChart.length > 0 && (
+                <AreaChartQuarter dataCountQuarter={dataAreaChart} />
+              )}{" "}
+            </row>
+          </span>
+          <span className=" col-lg-4 col-12">
+            {listCategories && listCategories.length > 0 && (
+              <TableDepartment listCategories={listCategories} />
+            )}
+          </span>
         </div>
         <div className="row">
           {listCascadeByYear && listCascadeByYear.length > 0 ? (

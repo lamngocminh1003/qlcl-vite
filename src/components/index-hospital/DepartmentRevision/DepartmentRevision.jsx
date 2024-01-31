@@ -13,11 +13,16 @@ import "./DepartmentRevision.scss";
 import { TableDepartmentRevision } from "./TableDepartmentRevision";
 import { useHistory } from "react-router-dom";
 import ModalEditDepartment from "./ModalEditDepartment";
-import { updateMajorStatManifestService } from "../../../services/index/MajorStatDetailService";
+import {
+  updateMajorStatManifestService,
+  updateMajorStatManifestOverrideService,
+} from "../../../services/index/MajorStatDetailService";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import ModalUploadFile from "./ModalUploadFile";
 import { SortCategoryId } from "../Department/SortCategory";
 import { columnsIndex, columnDepartmentName } from "../../input/Column";
+import RechartsPieChart from "./PieChart";
+import Cart from "../Dashboard/Cart";
 const DepartmentRevision = (props) => {
   const categoryId = localStorage.getItem("categoryId");
   const [showEdit, setShowEdit] = useState(false);
@@ -34,6 +39,8 @@ const DepartmentRevision = (props) => {
   const [timestamp, setTimestamp] = useState("");
   const [showEditFileContent, setShowEditFileContent] = useState(false);
   const [listCascadeByYear, setListCascadeByYear] = useState({});
+  const [majorDetailCount, setMajorDetailCount] = useState("");
+  const [dataCountQuarter, setDataCountQuarter] = useState([]);
   const handleEditFileContent = () => {
     setShowEditFileContent(true);
   };
@@ -69,6 +76,60 @@ const DepartmentRevision = (props) => {
               variant="contained"
               style={buttonStyle}
               onClick={() => handleClick(row)}
+              className="buttonActive"
+            >
+              {displayText}
+            </Button>
+          );
+        } else {
+          // Ngược lại, hiển thị Button
+          return (
+            <Box style={boxStyle} className="boxActive">
+              <Typography
+                color="#eeeded"
+                style={boxStyle}
+                className="boxActive"
+              >
+                {displayText}
+              </Typography>
+            </Box>
+          );
+        }
+      },
+    },
+  ];
+  const columnOverride = [
+    {
+      field: "isOverriden",
+      headerName: "Bệnh viện",
+      width: 140,
+      valueGetter: (params) => {
+        if (params.value === true) {
+          return "Áp dụng";
+        } else if (params.value === false) {
+          return "Không áp dụng";
+        }
+        return params.value; // Giữ nguyên giá trị nếu không trùng khớp
+      },
+      renderCell: ({ row }) => {
+        const { isOverriden } = row;
+        const buttonStyle = {
+          backgroundColor: isOverriden ? "#95C22B" : "#EDE7D3",
+          cursor: "pointer",
+          color: "#333",
+        };
+        const boxStyle = {
+          backgroundColor: isOverriden ? "#95C22B" : "#EDE7D3",
+          color: "#333",
+        };
+        const displayText = isOverriden ? "Áp dụng" : "Không áp dụng";
+        if (categoryId == 1) {
+          // Nếu categoryId bằng 1, hiển thị Typography thay vì Button
+          return (
+            <Button
+              variant="contained"
+              style={buttonStyle}
+              onClick={() => handleClickIsOverriden(row)}
               className="buttonActive"
             >
               {displayText}
@@ -201,6 +262,7 @@ const DepartmentRevision = (props) => {
             elem.effectiveYear === item.effectiveYear &&
             elem.criteria === item.criteria &&
             elem.formula === item.formula &&
+            elem.isOverriden === item.isOverriden &&
             elem.active === item.active
         );
         if (!existingItem) {
@@ -212,6 +274,7 @@ const DepartmentRevision = (props) => {
             effectiveYear: item.effectiveYear,
             criteria: item.criteria,
             formula: item.formula,
+            isOverriden: item.isOverriden,
             active: item.active,
           };
           acc.push(existingItem);
@@ -233,6 +296,13 @@ const DepartmentRevision = (props) => {
         return acc;
       }, []);
       let uniqueArray = await SortCategoryId(resultArray);
+      countQuarter(resultArray);
+      // Sử dụng filter để lọc các mục có thuộc tính active là true
+      const activeItems = resultArray.filter((item) => item.active === true);
+
+      // Lấy số lượng mục có active là true
+      const numberOfActiveItems = activeItems.length;
+      setMajorDetailCount(numberOfActiveItems);
       setListDepartment(uniqueArray);
     }
   };
@@ -243,6 +313,32 @@ const DepartmentRevision = (props) => {
         existingItem[field] = null;
       }
     });
+  };
+  const countQuarter = (data) => {
+    let dataCountQuarter = [
+      { name: "Q1", value: 0 },
+      { name: "Q2", value: 0 },
+      { name: "Q3", value: 0 },
+      { name: "Q4", value: 0 },
+    ];
+
+    // Thực hiện thống kê và cập nhật mảng dataCountQuarter
+    data.forEach((item) => {
+      for (let i = 0; i < 4; i++) {
+        let quarter = `Q${i + 1}`;
+        if (item[quarter] !== null && item[quarter] !== undefined) {
+          let index = dataCountQuarter.findIndex(
+            (stat) => stat.name === quarter
+          );
+          if (index !== -1) {
+            dataCountQuarter[index].value += 1;
+          }
+        }
+      }
+    });
+
+    // Hiển thị kết quả
+    setDataCountQuarter(dataCountQuarter);
   };
   const getMajorStatsByIdService = async (statId) => {
     if (statId) {
@@ -268,6 +364,33 @@ const DepartmentRevision = (props) => {
     setDataDepartment(row);
     setTimestamp(field);
   };
+  const handleClickIsOverriden = async (row) => {
+    if (row.isOverriden === false) {
+      try {
+        let res = await updateMajorStatManifestOverrideService(
+          row.statId,
+          row.effectiveYear,
+          row.categoryId
+        );
+        if (res) {
+          //success
+          fetchAllMajorStatDetailByStatAndYear(statId, yearEffective);
+        }
+      } catch (error) {}
+    } else if (row.isOverriden === true) {
+      try {
+        let res = await updateMajorStatManifestOverrideService(
+          row.statId,
+          row.effectiveYear,
+          -row.categoryId
+        );
+        if (res) {
+          //success
+          fetchAllMajorStatDetailByStatAndYear(statId, yearEffective);
+        }
+      } catch (error) {}
+    }
+  };
   const handleClick = async (row) => {
     let activeClick = row.active === true ? false : true;
     try {
@@ -282,30 +405,11 @@ const DepartmentRevision = (props) => {
       }
     } catch (error) {}
   };
-  if (isLoading) {
-    return (
-      <div className="loading">
-        {" "}
-        <Oval
-          height={80}
-          width={80}
-          color="#51e5ff"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-          ariaLabel="oval-loading"
-          secondaryColor="#429ea6"
-          strokeWidth={2}
-          strokeWidthSecondary={2}
-        />
-        <div className="text">Loading....</div>
-      </div>
-    );
-  }
+
   const handleBack = () => {
     history.push(`/hospital-index/${statId}`);
   };
-
+  const title = "Số khoa/ phòng";
   return (
     <>
       <ModalUploadFile
@@ -330,7 +434,7 @@ const DepartmentRevision = (props) => {
         statId={statId}
         yearEffective={yearEffective}
       />{" "}
-      {!isLoading && (
+      {!false && (
         <>
           <div className="h1 text-center text-primary m-3 px-md-5 px-3">
             Chỉ số <span className="text-warning">{statName}</span> theo khoa/
@@ -341,7 +445,7 @@ const DepartmentRevision = (props) => {
           </div>
           <div className="container mb-3">
             <div className="row">
-              <div className="col-12 col-lg-6 align-self-end">
+              <div className="col-12 col-lg-4 align-self-end">
                 <div className="d-flex gap-3 mb-lg-5">
                   {" "}
                   <span>
@@ -375,13 +479,23 @@ const DepartmentRevision = (props) => {
                   </span>
                 </div>
               </div>
-              <div className="col-12 col-lg-6 ">
+              <div className="col-12 col-lg-4 ">
                 {" "}
                 <Dashboard
                   data={listCascadeByYear}
                   key={`dashboard-${1}`}
                   index={1}
                 />
+              </div>{" "}
+              <div className="col-6 col-lg-2 d-flex align-self-end mb-5">
+                {" "}
+                {dataCountQuarter && dataCountQuarter.length > 0 && (
+                  <RechartsPieChart dataPieChart={dataCountQuarter} />
+                )}{" "}
+              </div>{" "}
+              <div className="col-6 col-lg-2 d-flex align-self-end mb-5">
+                {" "}
+                <Cart title={title} majorCount={majorDetailCount} />
               </div>
             </div>
             <TableDepartmentRevision
@@ -391,6 +505,7 @@ const DepartmentRevision = (props) => {
               handleEdit={handleEdit}
               column1={column1}
               columnActive={columnActive}
+              columnOverride={columnOverride}
               dataMajorStats={dataMajorStats}
             />
             <ScrollToTopButton />

@@ -2,7 +2,6 @@ import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { toast } from "react-toastify";
-import { useHistory } from "react-router-dom";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import NativeSelect from "@mui/material/NativeSelect";
@@ -22,7 +21,6 @@ const ModalAddRevision = (props) => {
     setSelectedValue(event.target.value);
     // Thực hiện các hành động cần thiết khi giá trị được chọn thay đổi
   };
-  let history = useHistory();
   const [isShowLoading, setIsShowLoading] = useState(false);
   const [isShowLoadingForAd, setIsShowLoadingForAd] = useState(false);
   let {

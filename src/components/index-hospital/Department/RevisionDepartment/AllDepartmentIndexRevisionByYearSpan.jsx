@@ -50,26 +50,6 @@ const AllDepartmentIndexRevisionByYearSpan = (props) => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="loading">
-        {" "}
-        <Oval
-          height={80}
-          width={80}
-          color="#51e5ff"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-          ariaLabel="oval-loading"
-          secondaryColor="#429ea6"
-          strokeWidth={2}
-          strokeWidthSecondary={2}
-        />
-        <div className="text">Loading....</div>
-      </div>
-    );
-  }
   const handleEdit = (row, field) => {
     // Xử lý sự kiện khi người dùng nhấn nút "Sửa"
     setShowEdit(true);
@@ -91,26 +71,7 @@ const AllDepartmentIndexRevisionByYearSpan = (props) => {
       `/revision-file/${params?.statId}/${params?.categoryId}/${params?.effectiveYear}/${params?.repoHash}`
     );
   };
-  if (isLoading) {
-    return (
-      <div className="loading">
-        {" "}
-        <Oval
-          height={80}
-          width={80}
-          color="#51e5ff"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-          ariaLabel="oval-loading"
-          secondaryColor="#429ea6"
-          strokeWidth={2}
-          strokeWidthSecondary={2}
-        />
-        <div className="text">Loading....</div>
-      </div>
-    );
-  }
+
   const handleClick = async (row) => {
     let joinModeClick = row.joinMode === 1 ? 2 : 1;
     try {
@@ -144,7 +105,7 @@ const AllDepartmentIndexRevisionByYearSpan = (props) => {
         yearEnd={yearEnd}
         yearStart={yearStart}
       />{" "}
-      {!isLoading && (
+      {!false && (
         <>
           <div className="h1 text-center text-primary m-3 px-md-5 px-3">
             Danh sách chỉ số khoa/ phòng từ {yearStart} đến {yearEnd}

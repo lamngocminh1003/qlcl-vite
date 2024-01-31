@@ -46,6 +46,8 @@ const SearchAllRevisionByDate = (props) => {
   };
   const handleSearch = async (values) => {
     setYear(values.yearSearch);
+    localStorage.setItem("year", values.yearSearch);
+
     let data = await fetchAllCascadeByYear(values.yearSearch);
     if (data === -1) {
       toast.error("Năm tìm kiếm không có kết quả. Vui lòng thêm mới!");

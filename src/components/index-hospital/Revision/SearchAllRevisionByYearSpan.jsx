@@ -6,10 +6,16 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { Formik } from "formik";
 import CancelIcon from "@mui/icons-material/Cancel";
+import { buildDataGroupYearMajor } from "../Department/BuildData";
 import { fetchAllCascadeBySpanYearAndStatIdService } from "../../../services/index/MajorStatDetailService";
 const SearchAllRevisionByYearSpan = (props) => {
-  const { indexId, setDataRevisionByIndexId, fetchAllCascadeByStatService } =
-    props;
+  const {
+    indexId,
+    setDataRevisionByIndexId,
+    fetchAllCascadeByStatService,
+    setGroupedYearsByStatName,
+    setMajorRevisionCount,
+  } = props;
   const [showCancel, setShowCancel] = useState(false);
   const userSchema = Yup.object().shape({
     yearStart: Yup.string()
@@ -104,6 +110,9 @@ const SearchAllRevisionByYearSpan = (props) => {
         (a, b) => a.effectiveYear - b.effectiveYear
       );
       setDataRevisionByIndexId(dataSort);
+      setMajorRevisionCount(dataSort.length);
+      const groupedYearsByStatName = buildDataGroupYearMajor(dataSort);
+      setGroupedYearsByStatName(groupedYearsByStatName.data);
       setShowCancel(true); // Hiển thị nút Hủy tìm kiếm khi tìm kiếm hoàn thành
     }
     if (data === -1) {

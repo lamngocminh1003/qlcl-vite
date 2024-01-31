@@ -77,10 +77,23 @@ const getCascadeByIdService = (id) => {
     config
   );
 };
+const updateJoinModeService = (statId, effectiveYear, joinMode) => {
+  let config = createConfig();
+  return axios.patch(
+    `${backendURL}/api/v1/MajorStatManifest/join-mode?statId=${statId}&effectiveYear=${effectiveYear}&joinMode=${joinMode}`,
+    {
+      statId,
+      effectiveYear,
+      joinMode,
+    },
+    config
+  );
+};
 export {
   fetchAllCascadeByStat,
   createCascadeService,
   updateCascadeService,
   deleteCascadeService,
   getCascadeByIdService,
+  updateJoinModeService,
 };

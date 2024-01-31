@@ -12,13 +12,15 @@ import { Box, Button } from "@mui/material";
 import { Edit, Delete, CalendarMonth } from "@mui/icons-material";
 import ModalEditHospitalIndex from "./ModalEditHospitalIndex";
 import ModalDeleteHospitalIndex from "./ModalDeleteHospitalIndex";
-import { Oval } from "react-loader-spinner";
 import ModalAddNewHospitalIndex from "./ModalAddNewHospitalIndex";
 import { useHistory } from "react-router-dom";
 import { fetchAllMajorStatManifestByYearSpanService } from "../../../services/index/MajorStatDetailService";
 import ScrollToTopButton from "../../input/ScrollToTopButton";
 import { fetchAllMajorStat } from "../../../services/index/MajorStatService";
 import { columnsIndex, columnStatName, columnUnit } from "../../input/Column";
+import RechartsPieChart from "../Dashboard/PieChart";
+import BasicCard from "../Dashboard/Cart";
+import { buildDataPieChart } from "../Department/BuildData";
 const IndexHospital = () => {
   const [pageSize, setPageSize] = useState(10);
   const categoryId = localStorage.getItem("categoryId");
@@ -27,6 +29,8 @@ const IndexHospital = () => {
   const [dataIndex, setDataIndex] = useState({});
   const [showDelete, setShowDelete] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [majorCount, setMajorCount] = useState();
+  const [dataPieChart, setDataPieChart] = useState([]);
   let history = useHistory();
   useEffect(() => {
     fetchListMajorStatsAndManifest();
@@ -63,6 +67,7 @@ const IndexHospital = () => {
           item.majorManifestCount = statIdCounts[statId] || 0;
         });
         setListMajorStats(majorStat);
+        setMajorCount(majorStat.length);
         setIsLoading(false);
       }
       setIsLoading(false);
@@ -77,6 +82,8 @@ const IndexHospital = () => {
       if (res?.data?.majorStats) {
         setListMajorStats(res?.data?.majorStats);
         let dataMajor = res?.data?.majorStats;
+        let unitStats = buildDataPieChart(dataMajor);
+        setDataPieChart(unitStats);
         setIsLoading(false);
         return dataMajor;
       }
@@ -85,6 +92,7 @@ const IndexHospital = () => {
       setIsLoading(false);
     }
   };
+
   const fetchAllMajorStatManifestByYearSpan = async () => {
     try {
       setIsLoading(true);
@@ -114,26 +122,7 @@ const IndexHospital = () => {
   const handleRevision = (id) => {
     history.push(`/hospital-index/${id}`);
   };
-  if (isLoading) {
-    return (
-      <div className="loading">
-        {" "}
-        <Oval
-          height={80}
-          width={80}
-          color="#51e5ff"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-          ariaLabel="oval-loading"
-          secondaryColor="#429ea6"
-          strokeWidth={2}
-          strokeWidthSecondary={2}
-        />
-        <div className="text">Loading....</div>
-      </div>
-    );
-  }
+
   const handleViewChartAllMajorByYear = () => {
     history.push(`/hospital-index-revision-by-year`);
   };
@@ -237,6 +226,8 @@ const IndexHospital = () => {
       </GridToolbarContainer>
     );
   }
+  const title = "Số lượng chỉ số";
+
   return (
     <>
       <ModalEditHospitalIndex
@@ -251,41 +242,59 @@ const IndexHospital = () => {
         dataIndex={dataIndex}
         fetchListMajorStatsAndManifest={fetchListMajorStatsAndManifest}
       />
-      {!isLoading && (
+      {!false && (
         <>
           <div className="h1 text-center text-primary m-3 px-md-5 px-3">
             Danh sách chỉ số bệnh viện
           </div>
           <div className="container mb-3">
-            <div className=" mb-2 d-flex justify-content-start gap-4">
-              {" "}
-              {categoryId == 1 ? (
+            <div className="row d-flex align-items-center">
+              <div className=" col-lg-8 col-12 mb-2 d-flex justify-content-start gap-4">
+                {" "}
+                {categoryId == 1 ? (
+                  <span>
+                    <ModalAddNewHospitalIndex
+                      fetchListMajorStatsAndManifest={
+                        fetchListMajorStatsAndManifest
+                      }
+                    />
+                  </span>
+                ) : (
+                  <span></span>
+                )}{" "}
                 <span>
-                  <ModalAddNewHospitalIndex
-                    fetchListMajorStatsAndManifest={
-                      fetchListMajorStatsAndManifest
-                    }
-                  />
+                  <Button
+                    variant="outlined"
+                    onClick={() => handleViewChartAllMajorByYear()}
+                  >
+                    Xem chỉ số trong một năm
+                  </Button>
+                </span>{" "}
+                <span>
+                  <Button
+                    variant="outlined"
+                    onClick={() => handleViewChartAllMajorByYearSpan()}
+                  >
+                    Xem chỉ số trong nhiều năm
+                  </Button>
                 </span>
-              ) : (
-                <span></span>
-              )}{" "}
-              <span>
-                <Button
-                  variant="outlined"
-                  onClick={() => handleViewChartAllMajorByYear()}
-                >
-                  Xem chỉ số trong một năm
-                </Button>
-              </span>{" "}
-              <span>
-                <Button
-                  variant="outlined"
-                  onClick={() => handleViewChartAllMajorByYearSpan()}
-                >
-                  Xem chỉ số trong nhiều năm
-                </Button>
-              </span>
+              </div>
+              <div className=" col-lg-4 col-12 mb-3">
+                <div className="row d-flex align-items-center">
+                  {categoryId == 1 && (
+                    <>
+                      {dataPieChart && dataPieChart.length > 0 && (
+                        <div className="col-lg-6 col-6 d-flex justify-content-end">
+                          <RechartsPieChart dataPieChart={dataPieChart} />
+                        </div>
+                      )}
+                    </>
+                  )}
+                  <div className="col-lg-4 col-6 ">
+                    <BasicCard title={title} majorCount={majorCount} />
+                  </div>
+                </div>
+              </div>
             </div>
             <Box style={{ height: 600 }}>
               {listMajorStats.length > 0 ? (

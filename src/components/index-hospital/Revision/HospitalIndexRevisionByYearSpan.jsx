@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Oval } from "react-loader-spinner";
 import { useHistory } from "react-router-dom";
 import ModalEditRevisionIndex from "./ModalEditRevisionIndex";
 import ScrollToTopButton from "../../input/ScrollToTopButton";
 import TableRevisionIndexByYear from "./TableRevisionIndexByYear";
+import ModalJoinMode from "./ModalJoinMode";
 import { fetchAllCascadeBySpanYearService } from "../../../services/index/MajorStatDetailService";
 const IndexHospital = (props) => {
   const categoryId = localStorage.getItem("categoryId");
@@ -13,6 +13,7 @@ const IndexHospital = (props) => {
   const [dataRevision, setDataRevision] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [dataRevisionByIndexId, setDataRevisionByIndexId] = useState();
+  const [showJoinMode, setShowJoinMode] = useState(false);
   let history = useHistory();
   const handleBack = () => {
     history.push(`/hospital-index-revision-by-year-span`);
@@ -25,6 +26,11 @@ const IndexHospital = (props) => {
       setYearEnd(yearEnd);
     }
   }, []);
+  const handleJoinMode = (row) => {
+    // Xử lý sự kiện khi người dùng nhấn nút "Sửa"
+    setShowJoinMode(true);
+    setDataRevision(row);
+  };
   useEffect(() => {
     fetchAllCascadeByYearSpan(yearStart, yearEnd);
   }, [yearStart, yearEnd]);
@@ -78,26 +84,7 @@ const IndexHospital = (props) => {
       `/department-hospital-index-revision/${params.row.cascadeId}/${params.row.effectiveYear}`
     );
   };
-  if (isLoading) {
-    return (
-      <div className="loading">
-        {" "}
-        <Oval
-          height={80}
-          width={80}
-          color="#51e5ff"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-          ariaLabel="oval-loading"
-          secondaryColor="#429ea6"
-          strokeWidth={2}
-          strokeWidthSecondary={2}
-        />
-        <div className="text">Loading....</div>
-      </div>
-    );
-  }
+
   return (
     <>
       <ModalEditRevisionIndex
@@ -107,8 +94,16 @@ const IndexHospital = (props) => {
         yearEnd={yearEnd}
         yearStart={yearStart}
         fetchAllCascadeByYearSpan={fetchAllCascadeByYearSpan}
+      />{" "}
+      <ModalJoinMode
+        setShowJoinMode={setShowJoinMode}
+        showJoinMode={showJoinMode}
+        dataRevision={dataRevision}
+        yearEnd={yearEnd}
+        yearStart={yearStart}
+        fetchAllCascadeByYearSpan={fetchAllCascadeByYearSpan}
       />
-      {!isLoading && (
+      {!false && (
         <>
           <div className="h1 text-center text-primary m-3 px-md-5 px-3">
             Danh sách chỉ số bệnh viện từ {yearStart} đến {yearEnd}
@@ -138,6 +133,7 @@ const IndexHospital = (props) => {
               dataRevisionByIndexId={dataRevisionByIndexId}
               handleEdit={handleEdit}
               handleDepartmentRevision={handleDepartmentRevision}
+              handleJoinMode={handleJoinMode}
             />
             <ScrollToTopButton />
           </div>

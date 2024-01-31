@@ -15,8 +15,14 @@ import {
 import CancelIcon from "@mui/icons-material/Cancel";
 import DoNotDisturbOnOutlinedIcon from "@mui/icons-material/DoNotDisturbOnOutlined";
 const TableDepartmentRevision = (props) => {
-  const { listDepartment, categoryId, handleEdit, column1, columnActive } =
-    props;
+  const {
+    listDepartment,
+    categoryId,
+    handleEdit,
+    column1,
+    columnActive,
+    columnOverride,
+  } = props;
   const columnAdmin = [
     ...column1,
     {
@@ -438,6 +444,7 @@ const TableDepartmentRevision = (props) => {
     },
 
     ...columnActive,
+    ...columnOverride,
   ];
 
   const [pageSize, setPageSize] = useState(10);

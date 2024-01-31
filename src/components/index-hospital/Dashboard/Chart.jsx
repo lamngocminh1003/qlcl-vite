@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import { useState, useEffect } from "react";
 import "../../../App.scss";
-const Dashboard = ({ data, index, handleDepartmentRevision }) => {
+const Dashboard = ({ data }) => {
   const [yAxisMax, setYAxisMax] = useState(0);
   const quarters = [
     {
@@ -58,7 +58,13 @@ const Dashboard = ({ data, index, handleDepartmentRevision }) => {
     } else {
       // Nếu tất cả giá trị đều nhỏ hơn hoặc bằng data.criteria
       // và data.criteria là 1, chiều cao của YAxis sẽ là 2
-      setYAxisMax(data.criteria === 1 ? 2 : Math.round(data.criteria * 1.2));
+      setYAxisMax(
+        data.criteria === 1
+          ? 2
+          : data.criteria === 0.1
+          ? 0.2
+          : Math.round(data.criteria * 1.2)
+      );
     }
   }, [data, quarters]);
 
@@ -121,6 +127,26 @@ const Dashboard = ({ data, index, handleDepartmentRevision }) => {
       </>
     );
   };
+  const renderCustomBarLabelReferenceLine = (props) => {
+    return (
+      <>
+        <text
+          x={props.viewBox.x} // Giữ nguyên giá trị x ở giữ
+          y={props.viewBox.y - 10} // Điều chỉnh giá trị y để đặt label phía trên đường line
+          fontSize={16}
+          fill="#5E4949"
+          offset="5"
+          text-anchor="middle"
+          className="recharts-text recharts-label"
+        >
+          <tspan
+            x={props.viewBox.x * 4}
+            dy="0.355em"
+          >{`${data.criteria} ${data.unit}`}</tspan>
+        </text>
+      </>
+    );
+  };
   return (
     <>
       <div className="mt-5">
@@ -144,11 +170,17 @@ const Dashboard = ({ data, index, handleDepartmentRevision }) => {
                   evaluation: quarters[props.index]?.evaluation,
                 })
               }
-            />
+            />{" "}
             <ReferenceLine
               y={data.criteria}
-              stroke="red"
-              label={`${data.criteria} ${data.unit}`}
+              stroke="#D04848"
+              strokeWidth={2} // Đặt giá trị mong muốn của độ dày ở đây
+              label={(props) =>
+                renderCustomBarLabelReferenceLine({
+                  ...props,
+                  data,
+                })
+              }
             />
           </BarChart>
         </ResponsiveContainer>{" "}

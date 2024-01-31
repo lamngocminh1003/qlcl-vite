@@ -82,9 +82,12 @@ const Login = (props) => {
           toast.success("Đăng nhập thành công");
           let token = res.data.token;
           localStorage.setItem("auth", true);
-          let token1 = localStorage.setItem("token", token);
+          localStorage.setItem("token", token);
           localStorage.setItem("username", res.data.username);
           localStorage.setItem("categoryId", res.data.categoryId);
+          localStorage.setItem("year", new Date().getFullYear());
+          localStorage.setItem("yearStart", new Date().getFullYear() - 1);
+          localStorage.setItem("yearEnd", new Date().getFullYear());
           history.push("/");
         }
         setIsShowLoading(false);

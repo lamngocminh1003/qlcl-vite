@@ -9,12 +9,7 @@ import {
   ReferenceLine,
 } from "recharts";
 import "../../../../../App.scss";
-const Dashboard = ({
-  data,
-  index,
-  handleDepartmentRevision,
-  handleDepartment,
-}) => {
+const Dashboard = ({ data }) => {
   const quarters = [
     {
       name: "Q1",
@@ -67,7 +62,11 @@ const Dashboard = ({
     // Nếu tất cả giá trị trong quarters đều nhỏ hơn data.criteriaManifest,
     // thiết lập yAxisMax cao hơn 20% giá trị đó
     yAxisMax =
-      data.criteriaManifest === 1 ? 2 : Math.round(data.criteriaManifest * 1.2);
+      data.criteriaManifest === 1
+        ? 2
+        : data.criteriaManifest === 0.1
+        ? 0.2
+        : Math.round(data.criteriaManifest * 1.2);
   }
   function CustomTooltip({ payload, label, active }) {
     if (active && payload.length > 0) {
@@ -129,7 +128,26 @@ const Dashboard = ({
       </>
     );
   };
-
+  const renderCustomBarLabelReferenceLine = (props) => {
+    return (
+      <>
+        <text
+          x={props.viewBox.x} // Giữ nguyên giá trị x ở giữ
+          y={props.viewBox.y - 10} // Điều chỉnh giá trị y để đặt label phía trên đường line
+          fontSize={16}
+          fill="#5E4949"
+          offset="5"
+          text-anchor="middle"
+          className="recharts-text recharts-label"
+        >
+          <tspan
+            x={props.viewBox.x * 4}
+            dy="0.355em"
+          >{`${data.criteriaManifest} ${data.unit}`}</tspan>
+        </text>
+      </>
+    );
+  };
   return (
     <>
       {" "}
@@ -152,9 +170,15 @@ const Dashboard = ({
           />
           <ReferenceLine
             y={data.criteriaManifest}
-            stroke="red"
-            label={`${data.criteriaManifest} ${data.unit}`}
-          />
+            stroke="#D04848"
+            strokeWidth={2}
+            label={(props) =>
+              renderCustomBarLabelReferenceLine({
+                ...props,
+                data,
+              })
+            }
+          />{" "}
         </BarChart>
       </ResponsiveContainer>{" "}
     </>

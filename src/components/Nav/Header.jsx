@@ -24,6 +24,10 @@ const Header = (props) => {
     localStorage.removeItem("auth", false);
     localStorage.removeItem("username");
     localStorage.removeItem("categoryId");
+    localStorage.removeItem("year");
+    localStorage.removeItem("yearStart");
+    localStorage.removeItem("yearEnd");
+
     logout();
     history.push("/login");
   };

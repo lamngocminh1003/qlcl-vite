@@ -2,25 +2,28 @@ import { useState, useEffect } from "react";
 import SearchAllRevisionByDate from "./SearchAllRevisionByDate";
 import { useHistory } from "react-router-dom";
 import ScrollToTopButton from "../../input/ScrollToTopButton";
-import { Oval } from "react-loader-spinner";
 import { Button } from "@mui/material";
 import { fetchAllCascadeByYearService } from "../../../services/index/MajorStatDetailService";
 import ExportCSV from "../../input/ExportCSV";
+import { buildDataPieChart } from "../Department/BuildData";
 import Dashboard from "./Chart";
+import RechartsPieChart from "./PieChart";
+import AreaChartQuarter from "./AreaChart";
+import Cart from "./Cart";
 const DashboardHospitalIndexRevisionByYear = () => {
-  const [year, setYear] = useState("");
+  const [year, setYear] = useState(localStorage.getItem("year"));
   const [isLoading, setIsLoading] = useState(false);
   const [listCascadeByYear, setListCascadeByYear] = useState("");
+  const [countMajorStat, setCountMajorStat] = useState("");
+  const [dataPieChart, setDataPieChart] = useState([]);
+  const [dataCountQuarter, setDataCountQuarter] = useState([]);
+
   let history = useHistory();
   const handleDepartmentRevision = (item) => {
     history.push(
       `/department-hospital-index-revision/${item.cascadeId}/${item.effectiveYear}`
     );
   };
-  useEffect(() => {
-    const currentYear = new Date().getFullYear();
-    setYear(currentYear.toString());
-  }, []); // [] ensures that this effect runs only once after the component mounts
   useEffect(() => {
     fetchAllCascadeByYear(year);
   }, [year]);
@@ -43,13 +46,21 @@ const DashboardHospitalIndexRevisionByYear = () => {
             return { ...item, average: roundedAverage };
           });
           let dataSort = roundedData.sort((a, b) => a.statId - b.statId);
+          let unitStats = buildDataPieChart(dataSort);
+          let dataCountQuarter = countQuarter(dataSort);
+          setDataCountQuarter(dataCountQuarter);
+          setDataPieChart(unitStats);
           setListCascadeByYear(dataSort);
+          setCountMajorStat(dataSort.length);
           setIsLoading(false);
           return 1;
         } else {
           // Nếu majorStatDetails là mảng rỗng
           setIsLoading(false);
           setListCascadeByYear([]);
+          setDataCountQuarter([]);
+          setDataPieChart([]);
+          setCountMajorStat("");
           return -1;
         }
       }
@@ -64,6 +75,25 @@ const DashboardHospitalIndexRevisionByYear = () => {
       );
     }
   };
+  const countQuarter = (data) => {
+    const unitStats = [
+      { name: "Q1", value: 0 },
+      { name: "Q2", value: 0 },
+      { name: "Q3", value: 0 },
+      { name: "Q4", value: 0 },
+    ];
+    data.forEach((item) => {
+      Object.keys(item.average).forEach((quarter) => {
+        if (quarter.startsWith("Q")) {
+          const index = unitStats.findIndex((stat) => stat.name === quarter);
+          if (index !== -1) {
+            unitStats[index].value += 1;
+          }
+        }
+      });
+    });
+    return unitStats;
+  };
   const handleReload = () => {
     window.location.reload(); // Tải lại trang
   };
@@ -73,26 +103,8 @@ const DashboardHospitalIndexRevisionByYear = () => {
   const handleHospitalIndexRevisionByYear = () => {
     history.push(`/hospital-index-revision-by-year/${year}`);
   };
-  if (isLoading) {
-    return (
-      <div className="loading">
-        {" "}
-        <Oval
-          height={80}
-          width={80}
-          color="#51e5ff"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-          ariaLabel="oval-loading"
-          secondaryColor="#429ea6"
-          strokeWidth={2}
-          strokeWidthSecondary={2}
-        />
-        <div className="text">Loading....</div>
-      </div>
-    );
-  }
+  const title = `Số lượng chỉ số ${year}`;
+
   const handleBack = () => {
     history.push(`/index-hospital`);
   };
@@ -113,13 +125,16 @@ const DashboardHospitalIndexRevisionByYear = () => {
             </button>
           </span>
         </div>
-        <div className="row mt-4 d-lg-flex  gap-3">
+        <div className="row mt-4 d-lg-flex gap-3">
           {" "}
           <div className="col-lg-9 ps-lg-5 ms-lg-3 d-flex ">
             <SearchAllRevisionByDate
               year={year}
               fetchAllCascadeByYear={fetchAllCascadeByYear}
               setYear={setYear}
+              setCountMajorStat={setCountMajorStat}
+              setDataPieChart={setDataPieChart}
+              setDataCountQuarter={setDataCountQuarter}
             />{" "}
             <div className="col-lg-4 mt-lg-1 ms-lg-5 ">
               <Button
@@ -149,12 +164,25 @@ const DashboardHospitalIndexRevisionByYear = () => {
             </div>
           </div>{" "}
           <div className="col-lg-2 d-flex justify-content-end">
-            <ExportCSV
-              listCascadeByYear={listCascadeByYear}
-              year={year}
-              fetchAllCascadeByYear={fetchAllCascadeByYear}
-              setYear={setYear}
-            />
+            <ExportCSV listCascadeByYear={listCascadeByYear} />
+          </div>
+        </div>
+        <div className="row m-3">
+          <div className="col-lg-3 col-6  ms-lg-5 d-flex align-items-center">
+            <Cart title={title} majorCount={countMajorStat} />
+          </div>{" "}
+          <div className="col-lg-2 col-6">
+            {dataPieChart && dataPieChart.length > 0 && (
+              <RechartsPieChart dataPieChart={dataPieChart} />
+            )}
+          </div>{" "}
+          <div className="col-lg-6 col-12 mt-sm-3 d-flex flex-column gap-1">
+            {dataCountQuarter && dataCountQuarter.length > 0 && (
+              <AreaChartQuarter dataCountQuarter={dataCountQuarter} />
+            )}{" "}
+            {dataCountQuarter && dataCountQuarter.length > 0 && (
+              <div className="text-center">Số lượng quý trong {year}</div>
+            )}
           </div>
         </div>
         <div className="row">

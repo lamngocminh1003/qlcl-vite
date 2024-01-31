@@ -28,6 +28,9 @@ const PrivateRoutes = (props) => {
     localStorage.removeItem("auth");
     localStorage.removeItem("username");
     localStorage.removeItem("categoryId");
+    localStorage.removeItem("year");
+    localStorage.removeItem("yearStart");
+    localStorage.removeItem("yearEnd");
     history.push("/login");
   };
   const logoutAndRedirect = () => {
@@ -35,6 +38,9 @@ const PrivateRoutes = (props) => {
     localStorage.removeItem("auth");
     localStorage.removeItem("username");
     localStorage.removeItem("categoryId");
+    localStorage.removeItem("year");
+    localStorage.removeItem("yearStart");
+    localStorage.removeItem("yearEnd");
     // Thực hiện các thao tác đăng xuất khác nếu cần
     logout();
     history.push("/login");

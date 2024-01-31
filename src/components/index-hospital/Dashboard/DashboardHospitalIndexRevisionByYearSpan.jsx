@@ -1,28 +1,29 @@
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import ScrollToTopButton from "../../input/ScrollToTopButton";
-import { Oval } from "react-loader-spinner";
+import { buildDataPieChart, countYear } from "../Department/BuildData";
 import { fetchAllCascadeBySpanYearService } from "../../../services/index/MajorStatDetailService";
 import ExportCSV from "../../input/ExportCSV";
 import { Button } from "@mui/material";
 import "../../../App.scss";
 import SearchAllRevisionByYearSpan from "./SearchAllRevisionByYearSpan";
 import GroupedBarChart from "./GroupedBarChart "; // Thay đường dẫn này bằng đường dẫn tới component của bạn
+import RechartsPieChart from "./PieChart";
+import AreaChartQuarter from "./AreaChart";
+import Cart from "./Cart";
 const DashboardHospitalIndexRevisionByYearSpan = () => {
-  const [yearStart, setYearStart] = useState("");
-  const [yearEnd, setYearEnd] = useState("");
+  const [yearStart, setYearStart] = useState(localStorage.getItem("yearStart"));
+  const [yearEnd, setYearEnd] = useState(localStorage.getItem("yearEnd"));
   const [isLoading, setIsLoading] = useState(false);
   const [listCascadeByYear, setListCascadeByYear] = useState("");
+  const [countMajorStat, setCountMajorStat] = useState("");
+  const [dataAreaChart, setDataAreaChart] = useState([]);
+  const [dataPieChart, setDataPieChart] = useState([]);
+
   let history = useHistory();
   const handleDepartmentRevision = (item) => {
     history.push(`/hospital-index/${item.statId}`);
   };
-  useEffect(() => {
-    const currentYear = new Date().getFullYear();
-    const previousYear = currentYear - 1; // Lấy năm trước đó
-    setYearStart(previousYear.toString());
-    setYearEnd(currentYear.toString());
-  }, []); // [] ensures that this effect runs only once after the component mounts
   useEffect(() => {
     fetchAllCascadeByYear(yearStart, yearEnd);
     buildListYear(yearStart, yearEnd);
@@ -69,10 +70,12 @@ const DashboardHospitalIndexRevisionByYearSpan = () => {
           });
           let dataSort = roundedData.sort((a, b) => a.statId - b.statId);
           setListCascadeByYear(dataSort);
+          let dataYear = countYear(dataSort);
+          setDataAreaChart(dataYear);
           let processedData = [];
           // Lặp qua mỗi đối tượng trong mảng majorStatDetails
           dataSort.forEach((detail) => {
-            const { statName, effectiveYear, average } = detail;
+            const { statName, effectiveYear, average, unit } = detail;
             // Nếu chưa có dữ liệu cho năm này, khởi tạo một object rỗng để lưu trữ dữ liệu
             if (!processedData[effectiveYear]) {
               processedData[effectiveYear] = {
@@ -84,28 +87,37 @@ const DashboardHospitalIndexRevisionByYearSpan = () => {
             processedData[effectiveYear].stats[statName] = average;
           });
           const groupedByStatId = dataSort.reduce((acc, item) => {
-            const { statId, statName, effectiveYear, average } = item;
+            const { statId, statName, effectiveYear, average, unit } = item;
             if (!acc[statId]) {
               acc[statId] = {
                 statId,
                 statName,
+                unit,
                 data: [],
               };
             }
             acc[statId].data.push({
               effectiveYear,
+              unit,
               average: adjustAverage(average),
             });
             return acc;
           }, {});
           const groupedArrayByStatId = Object.values(groupedByStatId);
           setGroupedYearsByStatName(groupedArrayByStatId);
+          setCountMajorStat(groupedArrayByStatId.length);
+          let unitStats = buildDataPieChart(groupedArrayByStatId);
+          setDataPieChart(unitStats);
           setIsLoading(false);
           return 1;
         } else {
           // Nếu majorStatDetails là mảng rỗng
           setIsLoading(false);
           setListCascadeByYear([]);
+          setDataPieChart([]);
+          setCountMajorStat("");
+          setDataAreaChart([]);
+
           return -1;
         }
       }
@@ -124,26 +136,7 @@ const DashboardHospitalIndexRevisionByYearSpan = () => {
   const handleReload = () => {
     window.location.reload(); // Tải lại trang
   };
-  if (isLoading) {
-    return (
-      <div className="loading">
-        {" "}
-        <Oval
-          height={80}
-          width={80}
-          color="#51e5ff"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-          ariaLabel="oval-loading"
-          secondaryColor="#429ea6"
-          strokeWidth={2}
-          strokeWidthSecondary={2}
-        />
-        <div className="text">Loading....</div>
-      </div>
-    );
-  }
+
   const handleBack = () => {
     history.push(`/index-hospital`);
   };
@@ -155,6 +148,8 @@ const DashboardHospitalIndexRevisionByYearSpan = () => {
       `/hospital-index-revision-by-year-span/${yearStart}/${yearEnd}`
     );
   };
+  const title = "Số lượng chỉ số";
+  const titleArea = "Số lượng chỉ số trong năm";
   return (
     <>
       <div className="container mb-5">
@@ -217,6 +212,27 @@ const DashboardHospitalIndexRevisionByYearSpan = () => {
               yearStart={yearStart}
               yearEnd={yearEnd}
             />
+          </div>
+        </div>{" "}
+        <div className="row m-3">
+          <div className="col-lg-3 col-6  ms-lg-4 d-flex align-items-center">
+            <Cart title={title} majorCount={countMajorStat} />
+          </div>{" "}
+          <div className="col-lg-2 col-6 ">
+            {dataPieChart && dataPieChart.length > 0 && (
+              <RechartsPieChart dataPieChart={dataPieChart} />
+            )}{" "}
+          </div>{" "}
+          <div className="col-lg-6 col-12 mt-sm-3 d-flex flex-column gap-1">
+            {dataAreaChart && dataAreaChart.length > 0 && (
+              <AreaChartQuarter
+                dataCountQuarter={dataAreaChart}
+                titleArea={titleArea}
+              />
+            )}{" "}
+            {dataAreaChart && dataAreaChart.length > 0 && (
+              <div className="text-center">{titleArea}</div>
+            )}
           </div>
         </div>
         <div className="row">

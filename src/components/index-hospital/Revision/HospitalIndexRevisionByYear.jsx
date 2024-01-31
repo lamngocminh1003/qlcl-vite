@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import ModalEditRevisionIndex from "./ModalEditRevisionIndex";
 import ScrollToTopButton from "../../input/ScrollToTopButton";
 import TableRevisionIndexByYear from "./TableRevisionIndexByYear";
+import ModalJoinMode from "./ModalJoinMode";
 import { fetchAllCascadeByYearService } from "../../../services/index/MajorStatDetailService";
 const HospitalIndexRevisionByYearSpan = (props) => {
   const categoryId = localStorage.getItem("categoryId");
@@ -12,6 +13,8 @@ const HospitalIndexRevisionByYearSpan = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [year, setYear] = useState();
   const [listCascadeByYear, setListCascadeByYear] = useState("");
+  const [showJoinMode, setShowJoinMode] = useState(false);
+
   let history = useHistory();
   const handleBack = () => {
     history.push(`/hospital-index-revision-by-year`);
@@ -75,26 +78,12 @@ const HospitalIndexRevisionByYearSpan = (props) => {
       `/department-hospital-index-revision/${params.row.cascadeId}/${params.row.effectiveYear}`
     );
   };
-  if (isLoading) {
-    return (
-      <div className="loading">
-        {" "}
-        <Oval
-          height={80}
-          width={80}
-          color="#51e5ff"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-          ariaLabel="oval-loading"
-          secondaryColor="#429ea6"
-          strokeWidth={2}
-          strokeWidthSecondary={2}
-        />
-        <div className="text">Loading....</div>
-      </div>
-    );
-  }
+  const handleJoinMode = (row) => {
+    // Xử lý sự kiện khi người dùng nhấn nút "Sửa"
+    setShowJoinMode(true);
+    setDataRevision(row);
+  };
+
   return (
     <>
       <ModalEditRevisionIndex
@@ -103,8 +92,15 @@ const HospitalIndexRevisionByYearSpan = (props) => {
         dataRevision={dataRevision}
         year={year}
         fetchAllCascadeByYear={fetchAllCascadeByYear}
+      />{" "}
+      <ModalJoinMode
+        setShowJoinMode={setShowJoinMode}
+        showJoinMode={showJoinMode}
+        dataRevision={dataRevision}
+        year={year}
+        fetchAllCascadeByYear={fetchAllCascadeByYear}
       />
-      {!isLoading && (
+      {!false && (
         <>
           <div className="h1 text-center text-primary m-3 px-md-5 px-3">
             Danh sách chỉ số bệnh viện năm {year}
@@ -134,6 +130,7 @@ const HospitalIndexRevisionByYearSpan = (props) => {
               dataRevisionByIndexId={listCascadeByYear}
               handleEdit={handleEdit}
               handleDepartmentRevision={handleDepartmentRevision}
+              handleJoinMode={handleJoinMode}
             />
             <ScrollToTopButton />
           </div>

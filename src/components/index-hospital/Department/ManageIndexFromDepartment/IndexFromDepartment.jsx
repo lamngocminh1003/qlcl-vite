@@ -12,7 +12,6 @@ import { Box, Button } from "@mui/material";
 import { Edit, Delete, CalendarMonth } from "@mui/icons-material";
 import ModalEditDepartmentFromIndex from "./ModalEditDepartmentFromIndex";
 import ModalDeleteDepartmentFromIndex from "./ModalDeleteDepartmentFromIndex";
-import { Oval } from "react-loader-spinner";
 import ModalAddNewDepartmentFromIndex from "./ModalAddNewDepartmentFromIndex";
 import ScrollToTopButton from "../../../input/ScrollToTopButton";
 import { getCategoryById } from "../../../../services/categoryService";
@@ -23,8 +22,10 @@ import {
   columnStatName,
   columnUnit,
   columnUnapprovedManifestCount,
-  columnCountRepo,
 } from "../../../input/Column";
+import { buildDataPieChart } from "../BuildData";
+import RechartsPieChart from "../../Dashboard/PieChart";
+import BasicCard from "../../Dashboard/Cart";
 const IndexFromDepartment = (props) => {
   const [pageSize, setPageSize] = useState(10);
   const categoryId = localStorage.getItem("categoryId");
@@ -35,6 +36,12 @@ const IndexFromDepartment = (props) => {
   const [departmentId, setDepartmentId] = useState("");
   const [categoryData, setCategoryData] = useState([]);
   const [listIndex, setListIndex] = useState("");
+  const titleTotalUnapprovedManifestCount = "Phiên bản chưa duyệt";
+  const titleTotalMinorStat = "Số chỉ số";
+  const [totalUnapprovedManifestCount, setTotalUnapprovedManifestCount] =
+    useState("");
+  const [dataPieChart, setDataPieChart] = useState([]);
+  const [totalMinorStat, setTotalMinorStat] = useState("");
   let history = useHistory(); // useEffect để theo dõi thay đổi trong props.match.params.id
   useEffect(() => {
     if (props?.match?.params?.id) {
@@ -58,6 +65,14 @@ const IndexFromDepartment = (props) => {
       let res = await MinorStatByCategoryIdService(departmentId);
       if (res?.data?.minorStats) {
         setListIndex(res.data.minorStats);
+        let unitStats = buildDataPieChart(res.data.minorStats);
+        setDataPieChart(unitStats);
+        setTotalMinorStat(res.data.minorStats.length);
+        const totalUnapprovedManifestCount = res.data.minorStats.reduce(
+          (sum, category) => sum + category.unapprovedManifestCount,
+          0
+        );
+        setTotalUnapprovedManifestCount(totalUnapprovedManifestCount);
         setIsLoading(false);
       }
       setIsLoading(false);
@@ -81,26 +96,7 @@ const IndexFromDepartment = (props) => {
   const handleRevision = (row) => {
     history.push(`/department-index-revision/${row.id}/${categoryData?.id}`);
   };
-  if (isLoading) {
-    return (
-      <div className="loading">
-        {" "}
-        <Oval
-          height={80}
-          width={80}
-          color="#51e5ff"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-          ariaLabel="oval-loading"
-          secondaryColor="#429ea6"
-          strokeWidth={2}
-          strokeWidthSecondary={2}
-        />
-        <div className="text">Loading....</div>
-      </div>
-    );
-  }
+
   const columnViewMinorDetail = [
     {
       field: "columnCountRepo",
@@ -244,51 +240,79 @@ const IndexFromDepartment = (props) => {
         fetchListMinorStats={fetchListMinorStats}
         departmentId={departmentId}
       />
-      {!isLoading && (
+      {!false && (
         <>
           <div className="h1 text-center text-primary m-3 px-md-5 px-3">
             Danh sách chỉ số thuộc{" "}
             <span className="text-warning">{categoryData.categoryName}</span>
           </div>
           <div className="container mb-3">
-            <div className=" mb-2 d-flex justify-content-start gap-4">
-              {" "}
-              <span>
-                <button className="btn btn-info" onClick={() => handleBack()}>
+            <div className="d-flex  mb-3 flex-column">
+              <div className="d-flex gap-4">
+                {" "}
+                <span>
+                  <button className="btn btn-info" onClick={() => handleBack()}>
+                    <span>
+                      <i className="fa-solid fa-rotate-left me-1"></i>
+                    </span>
+                    <span>Trở về</span>
+                  </button>
+                </span>
+                <span>
+                  {categoryId == 1 || categoryId == departmentId ? (
+                    <span>
+                      <ModalAddNewDepartmentFromIndex
+                        fetchListMinorStats={fetchListMinorStats}
+                        departmentId={departmentId}
+                      />
+                    </span>
+                  ) : (
+                    <span></span>
+                  )}
+                </span>{" "}
+                <span>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => handleViewChartDepartmentByYear()}
+                  >
+                    Xem chỉ số trong một năm
+                  </Button>
+                </span>{" "}
+                <span>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => handleViewChartDepartmentByYearSpan()}
+                  >
+                    Xem chỉ số trong nhiều năm
+                  </Button>
+                </span>
+              </div>
+              <div className="d-flex gap-4 justify-content-between">
+                {" "}
+                <span className="d-flex gap-4 align-items-center">
                   <span>
-                    <i className="fa-solid fa-rotate-left me-1"></i>
+                    <BasicCard
+                      title={titleTotalUnapprovedManifestCount}
+                      majorCount={totalUnapprovedManifestCount}
+                    />{" "}
                   </span>
-                  <span>Trở về</span>
-                </button>
-              </span>
-              <span>
-                {categoryId == 1 || categoryId == departmentId ? (
                   <span>
-                    <ModalAddNewDepartmentFromIndex
-                      fetchListMinorStats={fetchListMinorStats}
-                      departmentId={departmentId}
+                    <BasicCard
+                      title={titleTotalMinorStat}
+                      majorCount={totalMinorStat}
                     />
                   </span>
-                ) : (
-                  <span></span>
-                )}
-              </span>{" "}
-              <span>
-                <Button
-                  variant="outlined"
-                  onClick={() => handleViewChartDepartmentByYear()}
-                >
-                  Xem chỉ số trong một năm
-                </Button>
-              </span>{" "}
-              <span>
-                <Button
-                  variant="outlined"
-                  onClick={() => handleViewChartDepartmentByYearSpan()}
-                >
-                  Xem chỉ số trong nhiều năm
-                </Button>
-              </span>
+                </span>
+                <span style={{ minWidth: "200px" }}>
+                  {categoryId == 1 || categoryId == departmentId ? (
+                    <RechartsPieChart dataPieChart={dataPieChart} />
+                  ) : (
+                    <span></span>
+                  )}
+                </span>
+              </div>
             </div>
             <Box style={{ height: 600 }}>
               {listIndex.length > 0 ? (

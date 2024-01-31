@@ -1,6 +1,5 @@
 import { fetchAllCascadeByStat } from "../../../services/index/MajorStatManifestService";
 import { useEffect, useState } from "react";
-import { Oval } from "react-loader-spinner";
 import { useHistory } from "react-router-dom";
 import ModalAddNewRevisionIndex from "./ModalAddNewRevisionIndex";
 import ModalEditRevisionIndex from "./ModalEditRevisionIndex";
@@ -10,15 +9,19 @@ import TableRevisionIndexByYear from "./TableRevisionIndexByYear";
 import SearchAllRevisionByYearSpan from "./SearchAllRevisionByYearSpan";
 import { buildDataGroupYearMajor } from "../Department/BuildData";
 import GroupedBarChart from "../Dashboard/GroupedBarChart ";
+import Cart from "../Dashboard/Cart";
+import ModalJoinMode from "./ModalJoinMode";
 const IndexHospital = (props) => {
   const categoryId = localStorage.getItem("categoryId");
   const [showEdit, setShowEdit] = useState(false);
+  const [showJoinMode, setShowJoinMode] = useState(false);
   const [dataRevision, setDataRevision] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [indexId, setIndexId] = useState();
   const [dataMajorStats, setDataMajorStats] = useState();
   const [dataRevisionByIndexId, setDataRevisionByIndexId] = useState();
   const [groupedYearsByStatName, setGroupedYearsByStatName] = useState();
+  const [majorRevisionCount, setMajorRevisionCount] = useState("");
   let history = useHistory();
   const handleBack = () => {
     history.push(`/index-hospital`);
@@ -54,7 +57,8 @@ const IndexHospital = (props) => {
           (a, b) => a.effectiveYear - b.effectiveYear
         );
         setDataRevisionByIndexId(dataSort);
-        const groupedYearsByStatName = await buildDataGroupYearMajor(dataSort);
+        setMajorRevisionCount(dataSort.length);
+        const groupedYearsByStatName = buildDataGroupYearMajor(dataSort);
         setGroupedYearsByStatName(groupedYearsByStatName.data);
         setIsLoading(false);
       }
@@ -79,31 +83,17 @@ const IndexHospital = (props) => {
     setShowEdit(true);
     setDataRevision(params.row);
   };
+  const handleJoinMode = (row) => {
+    // Xử lý sự kiện khi người dùng nhấn nút "Sửa"
+    setShowJoinMode(true);
+    setDataRevision(row);
+  };
   const handleDepartmentRevision = (params) => {
     history.push(
       `/department-hospital-index-revision/${params.row.cascadeId}/${params.row.effectiveYear}`
     );
   };
-  if (isLoading) {
-    return (
-      <div className="loading">
-        {" "}
-        <Oval
-          height={80}
-          width={80}
-          color="#51e5ff"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-          ariaLabel="oval-loading"
-          secondaryColor="#429ea6"
-          strokeWidth={2}
-          strokeWidthSecondary={2}
-        />
-        <div className="text">Loading....</div>
-      </div>
-    );
-  }
+  const title = "Số lượng năm";
   return (
     <>
       <ModalEditRevisionIndex
@@ -113,8 +103,15 @@ const IndexHospital = (props) => {
         dataRevision={dataRevision}
         fetchAllCascadeByStatService={fetchAllCascadeByStatService}
         indexId={indexId}
+      />{" "}
+      <ModalJoinMode
+        setShowJoinMode={setShowJoinMode}
+        showJoinMode={showJoinMode}
+        dataRevision={dataRevision}
+        fetchAllCascadeByStatService={fetchAllCascadeByStatService}
+        indexId={indexId}
       />
-      {!isLoading && (
+      {!false && (
         <>
           <div className="h1 text-center text-primary m-3 px-md-5 px-3">
             Chỉ số{" "}
@@ -124,7 +121,7 @@ const IndexHospital = (props) => {
           <div className="m-5">
             {" "}
             <div className="row">
-              <div className="col-12 col-lg-6 align-self-end">
+              <div className="col-12 col-lg-5 d-flex flex-column align-self-end justify-content-end">
                 <div className="d-flex gap-3">
                   {" "}
                   <span>
@@ -164,12 +161,14 @@ const IndexHospital = (props) => {
                         fetchAllCascadeByStatService
                       }
                       dataRevisionByIndexId={dataRevisionByIndexId}
+                      setGroupedYearsByStatName={setGroupedYearsByStatName}
+                      setMajorRevisionCount={setMajorRevisionCount}
                     />
                   </div>
                 </div>
               </div>
               {groupedYearsByStatName ? (
-                <div className="col-lg-6 col-12">
+                <div className="col-lg-5 col-6">
                   {" "}
                   <GroupedBarChart
                     data={groupedYearsByStatName}
@@ -181,6 +180,10 @@ const IndexHospital = (props) => {
                   <div></div>
                 </>
               )}
+              <div className="col-lg-2 col-6 d-flex align-self-center">
+                {" "}
+                <Cart title={title} majorCount={majorRevisionCount} />
+              </div>
             </div>
             <TableRevisionIndexByYear
               categoryId={categoryId}
@@ -188,6 +191,7 @@ const IndexHospital = (props) => {
               dataMajorStats={dataMajorStats}
               handleEdit={handleEdit}
               handleDepartmentRevision={handleDepartmentRevision}
+              handleJoinMode={handleJoinMode}
             />
             <ScrollToTopButton />
           </div>

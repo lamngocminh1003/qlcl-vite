@@ -53,12 +53,7 @@ const ModalAddNewDepartmentIndex = (props) => {
   };
   return (
     <>
-      <Button
-        variant="primary"
-        className="mb-3"
-        onClick={handleShow}
-        title="Thêm mới chỉ số"
-      >
+      <Button variant="primary" onClick={handleShow} title="Thêm mới chỉ số">
         <span>
           <i className="fa-solid fa-plus me-1"></i>{" "}
         </span>

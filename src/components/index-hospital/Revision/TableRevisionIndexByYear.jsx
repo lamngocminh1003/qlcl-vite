@@ -8,12 +8,13 @@ import {
   GridToolbarContainer,
   GridToolbarExport,
 } from "@mui/x-data-grid";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Button } from "@mui/material";
 import BusinessIcon from "@mui/icons-material/Business";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import EditIcon from "@mui/icons-material/Edit";
 import { columnsIndex, columnStatName } from "../../input/Column";
+import { textStyleJoinMode } from "../../input/DesignLongContentInColumn";
 const TableRevisionIndexByYear = (props) => {
   const {
     handleDepartmentRevision,
@@ -21,6 +22,7 @@ const TableRevisionIndexByYear = (props) => {
     dataMajorStats,
     dataRevisionByIndexId,
     categoryId,
+    handleJoinMode,
   } = props;
   const columns2 = [
     ...columnsIndex,
@@ -335,6 +337,63 @@ const TableRevisionIndexByYear = (props) => {
 
   const columns = [
     ...columns2,
+    {
+      field: "joinMode",
+      headerName: "Cách thực hiện",
+      width: 140,
+      valueGetter: (params) => {
+        if (params.value === 1) {
+          return "Trung bình";
+        } else if (params.value === 2) {
+          return "Tổng tất cả";
+        } else if (params.value === 3) {
+          return "Tổng trung bình";
+        } else if (params.value === 5) {
+          return "Trung bình gần nhất";
+        } else if (params.value === 6) {
+          return "Tổng gần nhất";
+        }
+        return params.value; // Giữ nguyên giá trị nếu không trùng khớp
+      },
+      renderCell: ({ row }) => {
+        const { joinMode } = row;
+        const buttonStyle = {
+          backgroundColor:
+            joinMode === 1
+              ? "#A885EE"
+              : joinMode === 2
+              ? "#67d0dd"
+              : joinMode === 3
+              ? "#A2C579"
+              : joinMode === 5
+              ? "#FF6868"
+              : "#DC95DD",
+          cursor: "pointer",
+        };
+        const displayText =
+          joinMode === 1
+            ? "Trung bình"
+            : joinMode === 2
+            ? "Tổng tất cả"
+            : joinMode === 3
+            ? "Tổng trung bình"
+            : joinMode === 5
+            ? "Trung bình gần nhất"
+            : "Tổng gần nhất";
+        return (
+          <Button
+            variant="contained"
+            style={buttonStyle}
+            onClick={() => handleJoinMode(row)}
+            size="small"
+            fontSize="small"
+            className="buttonActive"
+          >
+            <Typography style={textStyleJoinMode}>{displayText} </Typography>
+          </Button>
+        );
+      },
+    },
     {
       field: "Sửa",
       width: 80,

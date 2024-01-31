@@ -92,26 +92,7 @@ const IndexHospital = (props) => {
     MinorStatDetailsByStatId(indexId);
     getMinorStatById(indexId);
   }, [indexId]);
-  if (isLoading) {
-    return (
-      <div className="loading">
-        {" "}
-        <Oval
-          height={80}
-          width={80}
-          color="#51e5ff"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-          ariaLabel="oval-loading"
-          secondaryColor="#429ea6"
-          strokeWidth={2}
-          strokeWidthSecondary={2}
-        />
-        <div className="text">Loading....</div>
-      </div>
-    );
-  }
+
   const handleEdit = (row, field) => {
     // Xử lý sự kiện khi người dùng nhấn nút "Sửa"
     setShowEdit(true);
@@ -133,26 +114,7 @@ const IndexHospital = (props) => {
       `/revision-file/${indexId}/${departmentId}/${params?.effectiveYear}/${params?.repoHash}`
     );
   };
-  if (isLoading) {
-    return (
-      <div className="loading">
-        {" "}
-        <Oval
-          height={80}
-          width={80}
-          color="#51e5ff"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-          ariaLabel="oval-loading"
-          secondaryColor="#429ea6"
-          strokeWidth={2}
-          strokeWidthSecondary={2}
-        />
-        <div className="text">Loading....</div>
-      </div>
-    );
-  }
+
   const handleClick = async (row) => {
     let joinModeClick = row.joinMode === 1 ? 2 : 1;
     try {
@@ -190,7 +152,7 @@ const IndexHospital = (props) => {
         MinorStatDetailsByStatId={MinorStatDetailsByStatId}
         indexId={indexId}
       />
-      {!isLoading && (
+      {!false && (
         <>
           <div className="h1 text-center text-primary m-3 px-md-5 px-3">
             Chỉ số <span className="text-warning">{dataIndex?.statName}</span>{" "}

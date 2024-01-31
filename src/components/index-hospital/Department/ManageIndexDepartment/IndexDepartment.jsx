@@ -11,12 +11,12 @@ import React, { useEffect, useState, useContext } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import { UserContext } from "../../../../context/UserContext";
 import ListIcon from "@mui/icons-material/List";
-import { Oval } from "react-loader-spinner";
 import ScrollToTopButton from "../../../input/ScrollToTopButton";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import { useHistory } from "react-router-dom";
 import { fetchAllCategories } from "../../../../services/categoryService";
 import { SortCategoryIdById } from "../SortCategory";
+import Cart from "../../Dashboard/Cart";
 import { columnsIndex, columnDepartmentName } from "../../../input/Column";
 const IndexDepartment = () => {
   const { minorStatCount } = useContext(UserContext);
@@ -24,7 +24,12 @@ const IndexDepartment = () => {
   const [listCategories, setListCategories] = useState([]);
   const categoryId = localStorage.getItem("categoryId");
   const [isLoading, setIsLoading] = useState(false);
+  const [totalUnapprovedManifestCount, setTotalUnapprovedManifestCount] =
+    useState("");
+  const [totalMinorStat, setTotalMinorStat] = useState("");
   let history = useHistory();
+  const titleTotalUnapprovedManifestCount = "Số phiên bản chưa duyệt";
+  const titleTotalMinorStat = "Số chỉ số";
   useEffect(() => {
     fetchCategories();
   }, [minorStatCount]);
@@ -37,30 +42,17 @@ const IndexDepartment = () => {
         // Sắp xếp lại mảng categoryData theo thứ tự ID đã chỉ định
         await SortCategoryIdById(categoryData);
         setListCategories(categoryData);
+        const totalUnapprovedManifestCount = categoryData.reduce(
+          (sum, category) => sum + category.unapprovedMinorStatManifestCount,
+          0
+        );
+        const totalMinorStat = categoryData.reduce(
+          (sum, category) => sum + category.minorStatCount,
+          0
+        );
+        setTotalUnapprovedManifestCount(totalUnapprovedManifestCount);
+        setTotalMinorStat(totalMinorStat);
         setIsLoading(false);
-        if (minorStatCount.length > 0) {
-          // Tạo mảng mới với trường countMinorStat
-          const resultData = res.data.categories.map((item1) => {
-            // Tìm kiếm thông tin từ mảng thứ hai dựa trên "categoryId"
-            const correspondingItem2 = minorStatCount.find(
-              (item2) => item2.categoryId === item1.id
-            );
-
-            // Kết hợp thông tin từ cả hai mảng (nếu tìm thấy)
-            if (correspondingItem2) {
-              return {
-                ...item1, // Copy thông tin từ data1
-                countMinorStat: correspondingItem2.minorStatCount,
-              };
-            } else {
-              // Nếu không có trùng khớp, thêm trường countMinorStat với giá trị mặc định là 0
-              return {
-                ...item1,
-                countMinorStat: 0,
-              };
-            }
-          });
-        }
       }
     } catch (error) {
       setIsLoading(false);
@@ -78,26 +70,6 @@ const IndexDepartment = () => {
   const handleViewAllMinorStat = () => {
     history.push(`/all-minor-stat`);
   };
-  if (isLoading) {
-    return (
-      <div className="loading">
-        {" "}
-        <Oval
-          height={80}
-          width={80}
-          color="#51e5ff"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-          ariaLabel="oval-loading"
-          secondaryColor="#429ea6"
-          strokeWidth={2}
-          strokeWidthSecondary={2}
-        />
-        <div className="text">Loading....</div>
-      </div>
-    );
-  }
 
   const columnMinorStatCountAndUnapprovedMinorStatManifestCount = [
     {
@@ -198,38 +170,53 @@ const IndexDepartment = () => {
   }
   return (
     <>
-      {!isLoading && (
+      {!false && (
         <>
           <div className="h1 text-center text-primary m-3 px-md-5 px-3">
             Danh sách khoa/ phòng
           </div>
-          <div className="container mb-3">
-            <div className=" mb-2 d-flex justify-content-start gap-4">
-              {" "}
-              <span>
-                <Button
-                  variant="outlined"
-                  onClick={() => handleViewAllMinorStat()}
-                >
-                  Xem tất cả chỉ số
-                </Button>
-              </span>{" "}
-              <span>
-                <Button
-                  variant="outlined"
-                  onClick={() => handleViewChartAllDepartmentByYear()}
-                >
-                  Xem chỉ số trong một năm
-                </Button>
-              </span>{" "}
-              <span>
-                <Button
-                  variant="outlined"
-                  onClick={() => handleViewChartAllDepartmentByYearSpan()}
-                >
-                  Xem chỉ số trong nhiều năm
-                </Button>
-              </span>
+          <div className="container mb-3 ">
+            <div className="d-flex justify-content-between mb-3">
+              <div className=" d-flex gap-4 align-items-center">
+                <span>
+                  <Button
+                    variant="outlined"
+                    onClick={() => handleViewAllMinorStat()}
+                  >
+                    Xem tất cả chỉ số
+                  </Button>
+                </span>{" "}
+                <span>
+                  <Button
+                    variant="outlined"
+                    onClick={() => handleViewChartAllDepartmentByYear()}
+                  >
+                    Xem chỉ số trong một năm
+                  </Button>
+                </span>{" "}
+                <span>
+                  <Button
+                    variant="outlined"
+                    onClick={() => handleViewChartAllDepartmentByYearSpan()}
+                  >
+                    Xem chỉ số trong nhiều năm
+                  </Button>
+                </span>{" "}
+              </div>
+              <div className=" d-flex justify-content-around gap-4">
+                <span>
+                  <Cart
+                    title={titleTotalUnapprovedManifestCount}
+                    majorCount={totalUnapprovedManifestCount}
+                  />
+                </span>
+                <span>
+                  <Cart
+                    title={titleTotalMinorStat}
+                    majorCount={totalMinorStat}
+                  />
+                </span>
+              </div>
             </div>
             <Box style={{ height: 600, width: "100%" }}>
               {listCategories.length > 0 ? (

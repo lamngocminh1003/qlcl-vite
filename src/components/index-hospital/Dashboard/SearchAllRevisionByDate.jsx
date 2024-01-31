@@ -6,7 +6,14 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { Formik } from "formik";
 const SearchAllRevisionByDate = (props) => {
-  const { year, fetchAllCascadeByYear, setYear } = props;
+  const {
+    year,
+    fetchAllCascadeByYear,
+    setYear,
+    setCountMajorStat,
+    setDataPieChart,
+    setDataCountQuarter,
+  } = props;
   const userSchema = Yup.object().shape({
     yearSearch: Yup.string()
       .required("Năm tìm kiếm không được để trống")
@@ -46,9 +53,14 @@ const SearchAllRevisionByDate = (props) => {
   };
   const handleSearch = async (values) => {
     setYear(values.yearSearch);
+    localStorage.setItem("year", values.yearSearch);
     let data = await fetchAllCascadeByYear(values.yearSearch);
+
     if (data === -1) {
       toast.error("Năm tìm kiếm không có kết quả. Vui lòng thêm mới!");
+      setCountMajorStat(0);
+      setDataPieChart([]);
+      setDataCountQuarter([]);
     }
   };
   return (

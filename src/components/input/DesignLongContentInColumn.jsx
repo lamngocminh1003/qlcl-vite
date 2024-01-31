@@ -128,6 +128,6 @@ export const textStyle = {
   fontSize: "12px",
 };
 export const textStyleJoinMode = {
-  fontSize: "10px",
+  fontSize: "12px",
   textTransform: "capitalize",
 };

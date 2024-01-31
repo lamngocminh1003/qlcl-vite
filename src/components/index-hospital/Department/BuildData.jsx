@@ -229,3 +229,80 @@ export const buildDataGroupYearMajor = (data1) => {
   };
   return data2;
 };
+export const buildDataPieChart = (data) => {
+  // Tạo đối tượng thống kê
+  const unitStats = [
+    { name: "phút", value: 0, statNames: [] },
+    { name: "giờ", value: 0, statNames: [] },
+    { name: "ngày", value: 0, statNames: [] },
+    { name: "%", value: 0, statNames: [] },
+    { name: "", value: 0, statNames: [] },
+    { name: "điểm", value: 0, statNames: [] },
+    { name: "sự cố", value: 0, statNames: [] },
+  ];
+
+  // Lặp qua mảng dữ liệu và thống kê
+  data.forEach((item) => {
+    const { unit, statName } = item;
+
+    // Tìm đối tượng có thuộc tính `label` bằng `unit`
+    const foundUnit = unitStats.find((u) => u.name === unit);
+
+    // Kiểm tra xem đối tượng có tồn tại không
+    if (foundUnit) {
+      // Thêm statName vào mảng của unit tương ứng và tăng số lượng
+      foundUnit.statNames.push(statName);
+      foundUnit.value++;
+    }
+  });
+  return unitStats;
+};
+export const buildDataCategoryPieChart = (data, dataCategory) => {
+  // Lặp qua mảng dữ liệu và thống kê
+  data.forEach((item) => {
+    const { categoryId, statName } = item;
+    // Tìm đối tượng có thuộc tính `label` bằng `unit`
+    const foundCategoryId = dataCategory.find(
+      (u) => u.categoryId == categoryId
+    );
+
+    // Kiểm tra xem đối tượng có tồn tại không
+    if (foundCategoryId) {
+      // Thêm statName vào mảng của unit tương ứng và tăng số lượng
+      foundCategoryId.statName.push(statName);
+      foundCategoryId.value++;
+    }
+  });
+
+  return dataCategory;
+};
+export const countYear = (data) => {
+  const yearCounts = {};
+
+  data.forEach((item) => {
+    const { effectiveYear, statName } = item;
+
+    if (!yearCounts[effectiveYear]) {
+      // Nếu năm chưa có trong yearCounts, tạo mới mảng chỉ số và mảng statNames
+      yearCounts[effectiveYear] = {
+        count: 1,
+        statNames: [statName],
+      };
+    } else {
+      // Nếu năm đã có trong yearCounts, tăng số lần xuất hiện lên 1, thêm chỉ số và statName vào mảng
+      yearCounts[effectiveYear].count += 1;
+      yearCounts[effectiveYear].statNames.push(statName);
+    }
+  });
+
+  // Chuyển đổi yearCounts thành mảng kết quả
+  const newArray = Object.entries(yearCounts).map(
+    ([year, { count, statNames }]) => ({
+      name: parseInt(year),
+      value: count,
+      statNames: statNames,
+    })
+  );
+
+  return newArray;
+};

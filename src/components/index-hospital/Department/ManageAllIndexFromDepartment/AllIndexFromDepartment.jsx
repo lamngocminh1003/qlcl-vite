@@ -18,7 +18,6 @@ import * as React from "react";
 import { Box } from "@mui/material";
 import ModalEditDepartmentFromIndex from "../ManageIndexFromDepartment/ModalEditDepartmentFromIndex";
 import ModalDeleteDepartmentFromIndex from "../ManageIndexFromDepartment/ModalDeleteDepartmentFromIndex";
-import { Oval } from "react-loader-spinner";
 import { fetchAllCategories } from "../../../../services/categoryService";
 import ModalAddNewDepartmentFromIndex from "./ModalAddNewDepartmentFromIndex";
 import ScrollToTopButton from "../../../input/ScrollToTopButton";
@@ -32,6 +31,9 @@ import {
   columnUnit,
   columnUnapprovedManifestCount,
 } from "../../../input/Column";
+import { buildDataPieChart } from "../BuildData";
+import RechartsPieChart from "../../Dashboard/PieChart";
+import BasicCard from "../../Dashboard/Cart";
 const IndexFromDepartment = (props) => {
   const [pageSize, setPageSize] = useState(10);
   const categoryId = localStorage.getItem("categoryId");
@@ -39,9 +41,10 @@ const IndexFromDepartment = (props) => {
   const [dataIndex, setDataIndex] = useState({});
   const [showDelete, setShowDelete] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [departmentId, setDepartmentId] = useState("");
   const [categoryData, setCategoryData] = useState([]);
   const [listIndex, setListIndex] = useState([]);
+  const titleTotalUnapprovedManifestCount = "Phiên bản chưa duyệt";
+
   let history = useHistory();
   useEffect(() => {
     fetchListMinorStats();
@@ -53,7 +56,7 @@ const IndexFromDepartment = (props) => {
       await SortCategoryIdById(res.data.categories);
       setCategoryData(res.data.categories);
     }
-  }; // Hàm để ánh xạ categoryId sang categoryName
+  };
   const getCategoryNamesFromMinorStats = (stats, mappings) => {
     return stats?.map((stat) => {
       const category = mappings?.find((item) => item.id === stat.categoryId);
@@ -63,7 +66,6 @@ const IndexFromDepartment = (props) => {
       };
     });
   };
-  // Lấy thêm categoryName từ mảng "categoryMappings" dựa trên "categoryId" trong mảng "minorStats"
   const statsWithCategoryNames = getCategoryNamesFromMinorStats(
     listIndex,
     categoryData
@@ -75,6 +77,14 @@ const IndexFromDepartment = (props) => {
       if (res?.data?.minorStats) {
         await SortCategoryId(res?.data?.minorStats);
         setListIndex(res.data.minorStats);
+        let unitStats = buildDataPieChart(res.data.minorStats);
+        setDataPieChart(unitStats);
+        setTotalMinorStat(res.data.minorStats.length);
+        const totalUnapprovedManifestCount = res.data.minorStats.reduce(
+          (sum, category) => sum + category.unapprovedManifestCount,
+          0
+        );
+        setTotalUnapprovedManifestCount(totalUnapprovedManifestCount);
         setIsLoading(false);
       }
       setIsLoading(false);
@@ -83,7 +93,6 @@ const IndexFromDepartment = (props) => {
     }
   };
   const handleEdit = (params) => {
-    // Xử lý sự kiện khi người dùng nhấn nút "Sửa"
     setShowEdit(true);
     setDataIndex(params.row);
   };
@@ -91,33 +100,13 @@ const IndexFromDepartment = (props) => {
     history.push(`/department-index`);
   };
   const handleDelete = (params) => {
-    // Xử lý sự kiện khi người dùng nhấn nút "Xóa"
     setShowDelete(true);
     setDataIndex(params.row);
   };
   const handleRevision = (row) => {
     history.push(`/department-index-revision/${row.id}/${row?.categoryId}`);
   };
-  if (isLoading) {
-    return (
-      <div className="loading">
-        {" "}
-        <Oval
-          height={80}
-          width={80}
-          color="#51e5ff"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-          ariaLabel="oval-loading"
-          secondaryColor="#429ea6"
-          strokeWidth={2}
-          strokeWidthSecondary={2}
-        />
-        <div className="text">Loading....</div>
-      </div>
-    );
-  }
+
   const columnViewMinorDetail = [
     {
       field: "columnCountRepo",
@@ -252,39 +241,59 @@ const IndexFromDepartment = (props) => {
         showEdit={showEdit}
         dataIndex={dataIndex}
         fetchListMinorStats={fetchListMinorStats}
-        departmentId={departmentId}
       />
       <ModalDeleteDepartmentFromIndex
         setShowDelete={setShowDelete}
         showDelete={showDelete}
         dataIndex={dataIndex}
         fetchListMinorStats={fetchListMinorStats}
-        departmentId={departmentId}
       />
-      {!isLoading && (
+      {!false && (
         <>
           <div className="h1 text-center text-primary m-3 px-md-5 px-3">
             Danh sách tất cả chỉ số khoa/ phòng{" "}
           </div>
           <div className="container mb-3">
-            <div className="d-flex gap-3 mb-3">
+            <div className="d-flex mb-3 justify-content-between">
               {" "}
-              <span>
-                <button className="btn btn-info" onClick={() => handleBack()}>
-                  <span>
-                    <i className="fa-solid fa-rotate-left me-1"></i>
-                  </span>
-                  <span>Trở về</span>
-                </button>
-              </span>
-              <span>
+              <span className="d-flex gap-3 align-items-center">
                 <span>
-                  <ModalAddNewDepartmentFromIndex
-                    fetchListMinorStats={fetchListMinorStats}
-                    departmentId={departmentId}
-                    categoryData={categoryData}
-                    categoryId={categoryId}
+                  <button className="btn btn-info" onClick={() => handleBack()}>
+                    <span>
+                      <i className="fa-solid fa-rotate-left me-1"></i>
+                    </span>
+                    <span>Trở về</span>
+                  </button>
+                </span>
+                <span>
+                  <span>
+                    <ModalAddNewDepartmentFromIndex
+                      fetchListMinorStats={fetchListMinorStats}
+                      categoryData={categoryData}
+                      categoryId={categoryId}
+                    />
+                  </span>
+                </span>
+              </span>
+              <span className="d-flex gap-3">
+                <span className="d-flex align-items-center">
+                  <BasicCard
+                    title={titleTotalUnapprovedManifestCount}
+                    majorCount={totalUnapprovedManifestCount}
+                  />{" "}
+                </span>{" "}
+                <span className="d-flex align-items-center">
+                  <BasicCard
+                    title={titleTotalMinorStat}
+                    majorCount={totalMinorStat}
                   />
+                </span>
+                <span style={{ minWidth: "200px" }}>
+                  {categoryId == 1 || categoryId == departmentId ? (
+                    <RechartsPieChart dataPieChart={dataPieChart} />
+                  ) : (
+                    <span></span>
+                  )}
                 </span>
               </span>
             </div>
