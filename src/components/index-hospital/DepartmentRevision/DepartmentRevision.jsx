@@ -299,7 +299,6 @@ const DepartmentRevision = (props) => {
       countQuarter(resultArray);
       // Sử dụng filter để lọc các mục có thuộc tính active là true
       const activeItems = resultArray.filter((item) => item.active === true);
-
       // Lấy số lượng mục có active là true
       const numberOfActiveItems = activeItems.length;
       setMajorDetailCount(numberOfActiveItems);

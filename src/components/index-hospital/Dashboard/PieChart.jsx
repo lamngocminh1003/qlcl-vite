@@ -31,7 +31,7 @@ const CustomTooltip = ({ active, payload, label }) => {
         style={{
           backgroundColor: "white",
           border: "1px solid #ccc",
-          fontSize: "8px",
+          fontSize: "16px",
           padding: "5px",
         }}
       >
@@ -41,7 +41,7 @@ const CustomTooltip = ({ active, payload, label }) => {
           </span>
           {`${data.name || "Không có đơn vị"}: ${data.value}`}
         </div>
-        {data.statNames && data.statNames.length > 0 && (
+        {/* {data.statNames && data.statNames.length > 0 && (
           <div>
             <ul>
               {data.statNames.map((statName, index) => (
@@ -49,7 +49,7 @@ const CustomTooltip = ({ active, payload, label }) => {
               ))}
             </ul>
           </div>
-        )}
+        )} */}
       </div>
     );
   }
@@ -108,7 +108,7 @@ const RechartsPieChart = (props) => {
             <Tooltip content={<CustomTooltip />} />
           </PieChart>
         </ResponsiveContainer>
-        <div className="text-center">Đơn vị chỉ số</div>
+        <div className="text-center">Đơn vị tính</div>
       </div>
     </>
   );

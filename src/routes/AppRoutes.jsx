@@ -168,7 +168,7 @@ const AppRoutes = (props) => {
           </Route>
         </Switch>
         <CardFooter sticky="bottom" className="footer">
-          Phiên bản: 23-01-2024
+          Phiên bản: 31-01-2024
         </CardFooter>
       </Router>
     </>

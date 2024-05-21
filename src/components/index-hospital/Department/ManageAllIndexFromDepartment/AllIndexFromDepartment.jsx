@@ -44,7 +44,11 @@ const IndexFromDepartment = (props) => {
   const [categoryData, setCategoryData] = useState([]);
   const [listIndex, setListIndex] = useState([]);
   const titleTotalUnapprovedManifestCount = "Phiên bản chưa duyệt";
-
+  const [totalUnapprovedManifestCount, setTotalUnapprovedManifestCount] =
+    useState("");
+  const [dataPieChart, setDataPieChart] = useState([]);
+  const [totalMinorStat, setTotalMinorStat] = useState("");
+  const titleTotalMinorStat = "Số chỉ số";
   let history = useHistory();
   useEffect(() => {
     fetchListMinorStats();
@@ -75,13 +79,13 @@ const IndexFromDepartment = (props) => {
       setIsLoading(true);
       let res = await allMinorStatService();
       if (res?.data?.minorStats) {
-        await SortCategoryId(res?.data?.minorStats);
+        SortCategoryId(res?.data?.minorStats);
         setListIndex(res.data.minorStats);
         let unitStats = buildDataPieChart(res.data.minorStats);
         setDataPieChart(unitStats);
         setTotalMinorStat(res.data.minorStats.length);
-        const totalUnapprovedManifestCount = res.data.minorStats.reduce(
-          (sum, category) => sum + category.unapprovedManifestCount,
+        const totalUnapprovedManifestCount = res?.data?.minorStats?.reduce(
+          (sum, category) => sum + category?.unapprovedManifestCount,
           0
         );
         setTotalUnapprovedManifestCount(totalUnapprovedManifestCount);

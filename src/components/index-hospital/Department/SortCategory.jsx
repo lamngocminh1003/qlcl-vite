@@ -3,29 +3,37 @@ export const specifiedOrder = [
   75, 76, 77, 73, 79, 74, 81, 82, 85, 84, 99, 98, 105, 107, 108, 104, 102, 103,
   106, 101, 63, 69, 68, 64, 65, 61, 62, 60, 66, 67,
 ];
+const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 // Loại bỏ ID 1, 2, 3 khỏi mảng categoryData
 // Sắp xếp lại mảng categoryData theo thứ tự ID đã chỉ định
-export const SortCategoryId = (uniqueArray) => {
-  uniqueArray.sort((a, b) => {
-    const indexA = specifiedOrder.indexOf(a.categoryId);
-    const indexB = specifiedOrder.indexOf(b.categoryId);
-    if (indexA === -1 && indexB === -1) {
-      // Nếu cả hai không có trong specifiedOrder, sắp xếp theo categoryId tăng dần
-      if (a.categoryId !== b.categoryId) {
-        return a.categoryId - b.categoryId;
-      } else {
-        // Nếu categoryId bằng nhau, sắp xếp theo statId tăng dần
-        return a.statId - b.statId;
-      }
-    } else if (indexA === -1) {
-      return 1;
-    } else if (indexB === -1) {
-      return -1;
-    } else {
-      return indexA - indexB;
+export const SortCategoryId = (arr) => {
+  let result = [];
+  let groupedData = arr.reduce((acc, obj) => {
+    let key = obj.categoryId;
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+    acc[key].push(obj);
+    return acc;
+  }, {});
+
+  specifiedOrder.forEach((categoryId) => {
+    let group = groupedData[categoryId];
+    if (group) {
+      group.sort((a, b) => a.statId - b.statId);
+      result = result.concat(group);
+      // Loại bỏ nhóm đã được xử lý để tránh lặp lại
+      delete groupedData[categoryId];
     }
   });
-  return uniqueArray;
+
+  // Xử lý nhóm không có trong specifiedOrder
+  Object.keys(groupedData).forEach((categoryId) => {
+    let group = groupedData[categoryId];
+    group.sort((a, b) => a.statId - b.statId);
+    result = result.concat(group);
+  });
+  return result;
 };
 // Loại bỏ ID 1, 2, 3 khỏi mảng categoryData
 // Sắp xếp lại mảng categoryData theo thứ tự ID đã chỉ định

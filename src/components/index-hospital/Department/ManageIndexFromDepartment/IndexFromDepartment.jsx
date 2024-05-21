@@ -40,6 +40,7 @@ const IndexFromDepartment = (props) => {
   const titleTotalMinorStat = "Số chỉ số";
   const [totalUnapprovedManifestCount, setTotalUnapprovedManifestCount] =
     useState("");
+
   const [dataPieChart, setDataPieChart] = useState([]);
   const [totalMinorStat, setTotalMinorStat] = useState("");
   let history = useHistory(); // useEffect để theo dõi thay đổi trong props.match.params.id

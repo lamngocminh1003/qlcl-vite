@@ -15,7 +15,7 @@ COPY . .
 
 ENV NODE_ENV production
 ENV VITE_NODE_ENV production
-ENV VITE_BACKEND_URL http://192.168.0.126:8081
+ENV VITE_BACKEND_URL http://146.190.89.3:8081
 
 # Build the React app
 RUN npm run build

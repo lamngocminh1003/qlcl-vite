@@ -72,7 +72,6 @@ const DashboardAllDepartmentIndexRevisionByYearSpan = () => {
         if (res.data.minorStatDetails.length > 0) {
           let uniqueArray = await buildData(res?.data?.minorStatDetails);
           await SortCategoryId(uniqueArray);
-
           setListCascadeByYear(uniqueArray);
           const categoryData = await fetchCategories();
           await SortCategoryIdById(categoryData);

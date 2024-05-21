@@ -13,7 +13,7 @@ function CustomTooltip({ payload, label, active }) {
     const value = payload[0].value;
     const evaluationStyle = {
       color: "#294B29", // Màu chữ dựa trên evaluation
-      fontSize: "12px",
+      fontSize: "16px",
       backgroundColor: "white",
       border: "1px solid #ccc",
       padding: "5px",

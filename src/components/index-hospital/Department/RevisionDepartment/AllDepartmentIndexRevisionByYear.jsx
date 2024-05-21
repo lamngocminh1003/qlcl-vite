@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Oval } from "react-loader-spinner";
 import { useHistory } from "react-router-dom";
 import ModalEditRevisionIndex from "./ModalEditRevisionIndex";
 import ModalDeleteRevisionIndex from "./ModalDeleteRevisionIndex";
@@ -10,6 +9,7 @@ import {
   updateJoinMode,
 } from "../../../../services/index/DepartmentStat/MinorStatDetailsService";
 import { buildData } from "../BuildData";
+import { SortCategoryId } from "../SortCategory";
 const AllDepartmentIndexRevisionByYear = (props) => {
   const categoryId = localStorage.getItem("categoryId");
   const [showEdit, setShowEdit] = useState(false);
@@ -38,7 +38,8 @@ const AllDepartmentIndexRevisionByYear = (props) => {
       let res = await MinorStatDetailsByYearService(year);
       if (res.data.minorStatDetails.length > 0) {
         let uniqueArray = await buildData(res.data.minorStatDetails);
-        setDataRevisionByIndexId(uniqueArray);
+        let sortedData = SortCategoryId(uniqueArray);
+        setDataRevisionByIndexId(sortedData);
       } else {
         setDataRevisionByIndexId([]);
       }
