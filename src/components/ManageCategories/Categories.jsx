@@ -19,6 +19,8 @@ import {
 } from "@mui/x-data-grid";
 import { Box } from "@mui/material";
 import { Edit, Delete, ManageAccounts, Folder } from "@mui/icons-material";
+import CardComponent from "../input/CardComponent";
+
 const Categories = () => {
   const [pageSize, setPageSize] = useState(10);
   const [listCategories, setListCategories] = useState([]);
@@ -101,6 +103,11 @@ const Categories = () => {
   const columns = [
     ...columnsIndex,
     ...columnCategoryName,
+    {
+      field: "folderCount",
+      headerName: "Số quy trình",
+      cellClassName: "name-column--cell",
+    },
     ...columnViewCategory,
   ];
   const columns2 = [
@@ -222,19 +229,29 @@ const Categories = () => {
             </div>
           )}
           <div className="container mb-4">
-            {categoryId == 1 ? (
-              <div className="d-flex gap-3">
-                <span>
-                  <ModalAddNewCategory
-                    handleUpdateTable={handleUpdateTable}
-                    fetchCategories={fetchCategories}
-                    listCategories={listCategories}
-                  />
-                </span>
-              </div>
-            ) : (
-              <div></div>
-            )}
+            <div className="d-flex justify-content-between gap-5  align-items-center">
+              {categoryId == 1 ? (
+                <>
+                  <span>
+                    <ModalAddNewCategory
+                      handleUpdateTable={handleUpdateTable}
+                      fetchCategories={fetchCategories}
+                      listCategories={listCategories}
+                    />
+                  </span>
+                </>
+              ) : (
+                <div></div>
+              )}{" "}
+              <span>
+                <CardComponent
+                  title="thư mục"
+                  icon="fa-solid fa-swatchbook"
+                  color="info"
+                  content={`Số lượng: ${listCategories?.length}`}
+                />
+              </span>
+            </div>
             <div className="row">
               <div className="col-s-12 col-md-8">
                 <SearchByName
@@ -244,7 +261,7 @@ const Categories = () => {
                 />
               </div>
               <div className="col-12 col-md-4">
-                <SearchOther />
+                <SearchOther from="/categories" />
               </div>
             </div>
             <Box style={{ height: 600 }}>

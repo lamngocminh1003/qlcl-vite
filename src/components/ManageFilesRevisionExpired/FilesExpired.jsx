@@ -5,7 +5,7 @@ import {
 } from "../../services/fileService";
 import ModalDeleteFile from "../ManageFilesRevisionActive/ModalDeleteFile";
 import _ from "lodash";
-import { Oval } from "react-loader-spinner";
+import CardComponent from "../input/CardComponent";
 import { getRevisionInfoByIdService } from "../../services/revisionService";
 import { useHistory } from "react-router-dom";
 import ModalDownloadFile from "../ManageFilesRevisionActive/ModalDownloadFile";
@@ -253,6 +253,13 @@ const Files = (props) => {
     setShowDelete(true);
     setDataFiles(file);
   };
+  let departmentFiles = [];
+  let AdminFiles = [];
+
+  if (listFiles && listFiles.length > 0) {
+    departmentFiles = listFiles.filter((item) => item.permission === 3);
+    AdminFiles = listFiles.filter((item) => item.permission === 0);
+  }
   return (
     <>
       <ModalDownloadFile
@@ -279,6 +286,35 @@ const Files = (props) => {
           Quản lý tài liệu hết hiệu lực{" "}
         </div>
         <div className="container">
+          <span className="d-flex justify-content-end gap-2  align-items-end">
+            <>
+              <span>
+                <CardComponent
+                  title="Tài liệu khoa/phòng"
+                  icon="fa-solid fa-users-between-lines"
+                  color="primary"
+                  content={`Số lượng: ${departmentFiles?.length}`}
+                />
+              </span>
+              <span>
+                <CardComponent
+                  title="Tài liệu quản trị viên"
+                  icon="fa-solid fa-user-shield"
+                  color="secondary"
+                  content={`Số lượng: ${AdminFiles?.length}`}
+                />
+              </span>
+            </>
+
+            <span>
+              <CardComponent
+                title="Tài liệu"
+                icon="fa-solid fa-file"
+                color="info"
+                content={`Số lượng: ${listFiles?.length}`}
+              />
+            </span>
+          </span>
           <div className="d-flex gap-3">
             {" "}
             <span>

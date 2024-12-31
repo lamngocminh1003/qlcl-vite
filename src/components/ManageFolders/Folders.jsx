@@ -16,12 +16,14 @@ import ModalDeleteFolderReference from "./ModalDeleteFolderReference";
 import { useHistory } from "react-router-dom";
 import _ from "lodash";
 import ScrollToTopButton from "../input/ScrollToTopButton";
-import SearchByName from "./SearchByName";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FolderOffIcon from "@mui/icons-material/FolderOff";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import CopyAllIcon from "@mui/icons-material/CopyAll";
+import CardComponent from "../input/CardComponent";
+import PieChartComponentGlobal from "../input/PieChartComponentGlobal";
+
 import SignalCellularNoSimOutlinedIcon from "@mui/icons-material/SignalCellularNoSimOutlined";
 import { renderCellExpand } from "../input/DesignLongContentInColumn";
 import {
@@ -325,6 +327,38 @@ const Folders = (props) => {
       </GridToolbarContainer>
     );
   }
+  let listFoldersReference = [];
+  let listFoldersReferenced = [];
+  let listLastFolders = [];
+  let data = [];
+  if (listFolders && listFolders.length > 0) {
+    listFoldersReferenced = listFolders.filter(
+      (item) => item.referencingFrom === null && item.references.length > 0
+    );
+    listFoldersReference = listFolders.filter(
+      (item) => item.referencingFrom && item.references.length > 0
+    );
+    listLastFolders = listFolders.filter((item) => item.referencesName === "");
+    // Tạo cấu trúc dữ liệu cuối cùng
+    data = [
+      {
+        id: 0,
+        value: listFoldersReferenced.length,
+        label: "Quy trình được tham chiếu",
+      },
+      {
+        id: 1,
+        value: listFoldersReference.length,
+        label: "Quy trình tham chiếu",
+      },
+      {
+        id: 2,
+        value: listLastFolders.length,
+        label: "Quy trình còn lại",
+      },
+    ];
+  }
+
   return (
     <>
       <ModalEditFolder
@@ -369,51 +403,81 @@ const Folders = (props) => {
           </div>
         )}
         <div className="container">
-          <div className="d-flex gap-3">
+          <div className="d-flex justify-content-between gap-5  align-items-center">
             {categoryIdLocalStorage == 1 && (
               <>
                 <span>
-                  <ModalAddNewFolder
-                    fetchFoldersByCategoryId={fetchFoldersByCategoryId}
-                    listFolders={listFolders}
-                    idCategory={categoryId}
-                    sortOption={sortOption}
+                  <PieChartComponentGlobal
+                    data={data}
+                    title="Phân loại quy trình"
+                    width="500"
+                    height="100"
+                  />
+                </span>
+                <span>
+                  <CardComponent
+                    title="Quy trình tham chiếu"
+                    icon="fa-solid fa-file-import"
+                    color="warning"
+                    content={`Số lượng: ${listFoldersReference?.length}`}
+                  />
+                </span>
+                <span>
+                  <CardComponent
+                    title="Quy trình được tham chiếu"
+                    icon="fa-solid fa-file-export"
+                    color="primary"
+                    content={`Số lượng: ${listFoldersReferenced?.length}`}
                   />
                 </span>{" "}
-                <span>
-                  <ModalAddFolderReference
-                    fetchFoldersByCategoryId={fetchFoldersByCategoryId}
-                    listFolders={listFolders}
-                    idCategory={categoryId}
-                    sortOption={sortOption}
-                    categoryData={listAllFolders}
-                  />
-                </span>
               </>
-            )}
+            )}{" "}
             <span>
-              <button
-                className="btn btn-info mb-1"
-                onClick={() => handleBack()}
-              >
-                <span>
-                  <i className="fa-solid fa-rotate-left me-1"></i>
-                </span>
-                <span>Trở về</span>
-              </button>
+              <CardComponent
+                title="Quy trình"
+                icon="fa-regular fa-folder"
+                color="info"
+                content={`Số lượng: ${listFolders?.length}`}
+              />
             </span>
           </div>
-          {/* <div className="row">
-            <div className="col-bg-6 ">
-              <SearchByName
-                fetchFoldersByCategoryId={fetchFoldersByCategoryId}
-                setListFolders={setListFolders}
-                listFolders={listFolders}
-                categoryId={categoryId}
-                sortOption={sortOption}
-              />
-            </div>
-          </div> */}
+          <div className="d-flex justify-content-between   align-items-end ">
+            <span className="d-flex gap-3 ">
+              {categoryIdLocalStorage == 1 && (
+                <>
+                  <span>
+                    <ModalAddNewFolder
+                      fetchFoldersByCategoryId={fetchFoldersByCategoryId}
+                      listFolders={listFolders}
+                      idCategory={categoryId}
+                      sortOption={sortOption}
+                    />
+                  </span>{" "}
+                  <span>
+                    <ModalAddFolderReference
+                      fetchFoldersByCategoryId={fetchFoldersByCategoryId}
+                      listFolders={listFolders}
+                      idCategory={categoryId}
+                      sortOption={sortOption}
+                      categoryData={listAllFolders}
+                    />
+                  </span>
+                </>
+              )}
+              <span>
+                <button
+                  className="btn btn-info mb-3"
+                  onClick={() => handleBack()}
+                >
+                  <span>
+                    <i className="fa-solid fa-rotate-left me-1"></i>
+                  </span>
+                  <span>Trở về</span>
+                </button>
+              </span>
+            </span>
+          </div>
+
           <Box style={{ height: 600, width: "100%" }}>
             {listFolders?.length > 0 ? (
               <DataGrid

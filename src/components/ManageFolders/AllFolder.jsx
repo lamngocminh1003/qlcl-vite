@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { fetchAllFolders } from "../../services/folderService";
 import ModalEditFolder from "./ModalEditFolder";
+import SearchOther from "../SearchOther/SearchOther";
+
 import {
   DataGrid,
   viVN,
@@ -27,6 +29,8 @@ import { Box, Button } from "@mui/material";
 import { columnInfoFolder, columnCategoryName } from "../input/Column";
 import ModalDeleteFolderReference from "./ModalDeleteFolderReference";
 import SignalCellularNoSimOutlinedIcon from "@mui/icons-material/SignalCellularNoSimOutlined";
+import CardComponent from "../input/CardComponent";
+
 const AllFolder = () => {
   const [listFolders, setListFolders] = useState([]);
   const [categoryData, setCategoryData] = useState([]);
@@ -311,27 +315,40 @@ const AllFolder = () => {
           </div>
         )}
         <div className="container">
-          <div className="d-flex gap-3">
-            {categoryIdLocalStorage == 1 && (
-              <span>
-                <ModalAddNewFolderForAllFolder
-                  fetchFolders={fetchFolders}
-                  listFolders={listFolders}
-                  sortOption={sortOption}
-                  categoryData={categoryData}
-                />
-              </span>
-            )}
-            <span>
-              <button
-                className="btn btn-info mb-1"
-                onClick={() => handleBack()}
-              >
+          <div className="d-flex justify-content-between gap-5  align-items-center">
+            <span className="d-flex justify-content-start gap-5 ">
+              {categoryIdLocalStorage == 1 && (
                 <span>
-                  <i className="fa-solid fa-rotate-left me-1"></i>
+                  <ModalAddNewFolderForAllFolder
+                    fetchFolders={fetchFolders}
+                    listFolders={listFolders}
+                    sortOption={sortOption}
+                    categoryData={categoryData}
+                  />
                 </span>
-                <span>Trở về</span>
-              </button>
+              )}
+              <div>
+                <SearchOther from="/folders" />
+              </div>
+              <span>
+                <button
+                  className="btn btn-info mb-3"
+                  onClick={() => handleBack()}
+                >
+                  <span>
+                    <i className="fa-solid fa-rotate-left me-1"></i>
+                  </span>
+                  <span>Trở về</span>
+                </button>
+              </span>
+            </span>
+            <span>
+              <CardComponent
+                title="Quy trình"
+                icon="fa-regular fa-folder"
+                color="info"
+                content={`Số lượng: ${listFolders?.length}`}
+              />
             </span>
           </div>
           <div className="row">

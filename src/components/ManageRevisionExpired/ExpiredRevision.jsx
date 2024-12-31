@@ -18,6 +18,8 @@ import ScrollToTopButton from "../input/ScrollToTopButton";
 import EditIcon from "@mui/icons-material/Edit";
 import FolderCopyIcon from "@mui/icons-material/FolderCopy";
 import { toast } from "react-toastify";
+import CardComponent from "../input/CardComponent";
+
 import {
   DataGrid,
   viVN,
@@ -317,45 +319,57 @@ const RevisionExpired = (props) => {
         </div>
         <div className="container">
           <div className="d-flex gap-3"></div>
-          <div className="row">
-            <div>
-              <span>
-                <button className="btn btn-info" onClick={() => handleBack()}>
-                  <span>
-                    <i className="fa-solid fa-rotate-left me-1"></i>
-                  </span>
-                  <span>Trở về</span>
-                </button>
-              </span>{" "}
-              <span>
-                <ModalAddRevision
-                  handleUpdateTable={handleUpdateTable}
-                  fetchActiveRevisionByFolderId={
-                    fetchRevisionExpiredRevisionByFolderId
-                  }
-                  listRevisions={listRevisions}
-                  folderId={folderId}
-                  categoryId={categoryId}
-                />
-              </span>{" "}
-              <span>
-                <Button
-                  variant="outlined"
-                  onClick={() => handleCloneActiveRevision()}
-                >
-                  {isShowLoading ? (
-                    <span className="me-1">
-                      <i className="fas fa-spinner fa-pulse me-1 text-primary"></i>
+          <div>
+            <span className="d-flex justify-content-between gap-2  align-items-end">
+              <span className="d-flex justify-content-start gap-2  ">
+                <span>
+                  <button className="btn btn-info" onClick={() => handleBack()}>
+                    <span>
+                      <i className="fa-solid fa-rotate-left me-1"></i>
                     </span>
-                  ) : (
-                    <span className="me-1">
-                      <FolderCopyIcon />{" "}
-                    </span>
-                  )}
-                  <span>Sao chép phiên bản hiện hành</span>
-                </Button>
-              </span>{" "}
-            </div>
+                    <span>Trở về</span>
+                  </button>
+                </span>{" "}
+                <span>
+                  <ModalAddRevision
+                    handleUpdateTable={handleUpdateTable}
+                    fetchActiveRevisionByFolderId={
+                      fetchRevisionExpiredRevisionByFolderId
+                    }
+                    listRevisions={listRevisions}
+                    folderId={folderId}
+                    categoryId={categoryId}
+                  />
+                </span>{" "}
+                <span>
+                  <Button
+                    variant="outlined"
+                    onClick={() => handleCloneActiveRevision()}
+                  >
+                    {isShowLoading ? (
+                      <span className="me-1">
+                        <i className="fas fa-spinner fa-pulse me-1 text-primary"></i>
+                      </span>
+                    ) : (
+                      <span className="me-1">
+                        <FolderCopyIcon />{" "}
+                      </span>
+                    )}
+                    <span>Sao chép phiên bản hiện hành</span>
+                  </Button>
+                </span>{" "}
+              </span>
+              <span className="d-flex justify-content-end gap-2  ">
+                <span>
+                  <CardComponent
+                    title="Phiên bản hết hạn"
+                    icon="fa-solid fa-folder-minus"
+                    color="secondary"
+                    content={`Số lượng: ${listRevisions?.length}`}
+                  />
+                </span>
+              </span>
+            </span>
             <Box style={{ height: 600, width: "100%" }} className="my-3">
               {listRevisions.length > 0 ? (
                 <DataGrid

@@ -14,6 +14,8 @@ import ModalEditFile from "../ManageFilesRevisionActive/ModalEditFile";
 import { updateFileInfo } from "../../services/fileService";
 import { Business, AdminPanelSettingsOutlined } from "@mui/icons-material";
 import { Button } from "@mui/material";
+import CardComponent from "../input/CardComponent";
+
 const AllFiles = (props) => {
   const [endTime, setEndTime] = useState("9999-10-16T06:28:52.783Z"); // Sử dụng `null` làm ngày mặc định
   const [startTime, setStartTime] = useState("1980-1-1T06:28:52.783Z"); // Sử dụng `null` làm ngày mặc định
@@ -101,7 +103,13 @@ const AllFiles = (props) => {
     } catch (error) {}
   };
   const [showEdit, setShowEdit] = useState(false);
+  let departmentFiles = [];
+  let AdminFiles = [];
 
+  if (listFiles && listFiles.length > 0) {
+    departmentFiles = listFiles.filter((item) => item.permission === 3);
+    AdminFiles = listFiles.filter((item) => item.permission === 0);
+  }
   return (
     <>
       <ModalDownloadFile
@@ -129,7 +137,7 @@ const AllFiles = (props) => {
         </div>
         <div className="container">
           <div className="row">
-            <div>
+            <div className="d-flex justify-content-between gap-5  align-items-center">
               <span>
                 <button className="btn btn-info" onClick={() => handleBack()}>
                   <span>
@@ -137,6 +145,34 @@ const AllFiles = (props) => {
                   </span>
                   <span>Trở về</span>
                 </button>
+              </span>
+              <span className="d-flex justify-content-between gap-2  align-items-end">
+                <>
+                  <span>
+                    <CardComponent
+                      title="Tài liệu khoa/phòng"
+                      icon="fa-solid fa-users-between-lines"
+                      color="primary"
+                      content={`Số lượng: ${departmentFiles?.length}`}
+                    />
+                  </span>
+                  <span>
+                    <CardComponent
+                      title="Tài liệu quản trị viên"
+                      icon="fa-solid fa-user-shield"
+                      color="secondary"
+                      content={`Số lượng: ${AdminFiles?.length}`}
+                    />
+                  </span>
+                </>
+                <span>
+                  <CardComponent
+                    title="Tài liệu"
+                    icon="fa-solid fa-file"
+                    color="info"
+                    content={`Số lượng: ${listFiles?.length}`}
+                  />
+                </span>
               </span>
             </div>
             <div className="row mt-4 ">

@@ -14,7 +14,6 @@ import SearchByName from "./SearchByName";
 import SearchByDate from "./SearchByDate";
 import ModalDeleteFile from "./ModalDeleteFile";
 import SearchByDateWindow from "./SearchByDateWindow";
-import { Oval } from "react-loader-spinner";
 import ModalEditFile from "./ModalEditFile";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -22,6 +21,8 @@ import { columnFileInfo } from "../input/Column";
 import SimCardDownloadIcon from "@mui/icons-material/SimCardDownload";
 import { Box, Button } from "@mui/material";
 import { Business, AdminPanelSettingsOutlined } from "@mui/icons-material";
+import CardComponent from "../input/CardComponent";
+
 import {
   DataGrid,
   viVN,
@@ -75,6 +76,7 @@ const Files = (props) => {
   const handleEditTable = () => {
     fetchFileActiveByFolderId(folderId, categoryId);
   };
+
   const fetchRevisionActiveByFolderId = async (folderId, categoryId) => {
     try {
       setIsLoading(true);
@@ -172,7 +174,13 @@ const Files = (props) => {
   };
   let categoryIdLocal = localStorage.getItem("categoryId");
   let auth = localStorage.getItem("auth");
+  let departmentFiles = [];
+  let AdminFiles = [];
 
+  if (listFiles && listFiles.length > 0) {
+    departmentFiles = listFiles.filter((item) => item.permission === 3);
+    AdminFiles = listFiles.filter((item) => item.permission === 0);
+  }
   const columns = [
     ...columnFileInfo,
     {
@@ -326,6 +334,36 @@ const Files = (props) => {
           <span className="text-lowercase text-warning">{folderName}</span>
         </div>
         <div className="container">
+          <span className="d-flex justify-content-end gap-2  align-items-end">
+            {auth && categoryIdLocal == 1 && (
+              <>
+                <span>
+                  <CardComponent
+                    title="Tài liệu khoa/phòng"
+                    icon="fa-solid fa-users-between-lines"
+                    color="primary"
+                    content={`Số lượng: ${departmentFiles?.length}`}
+                  />
+                </span>
+                <span>
+                  <CardComponent
+                    title="Tài liệu quản trị viên"
+                    icon="fa-solid fa-user-shield"
+                    color="secondary"
+                    content={`Số lượng: ${AdminFiles?.length}`}
+                  />
+                </span>
+              </>
+            )}
+            <span>
+              <CardComponent
+                title="Tài liệu"
+                icon="fa-solid fa-file"
+                color="info"
+                content={`Số lượng: ${listFiles?.length}`}
+              />
+            </span>
+          </span>
           <div className="d-flex gap-3">
             {" "}
             <span>

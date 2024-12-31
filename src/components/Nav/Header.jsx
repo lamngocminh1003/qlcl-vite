@@ -77,7 +77,7 @@ const Header = (props) => {
                       Trang chủ
                     </NavLink>
                     <>
-                      <NavLink to="/categories" className="nav-link">
+                      <NavLink to="/folders" className="nav-link">
                         Quy trình
                       </NavLink>
                     </>{" "}
@@ -97,7 +97,7 @@ const Header = (props) => {
                             Chỉ số {categoryData.categoryName}
                           </NavDropdown.Item>
                         )}
-                        <NavDropdown.Item as={Link} to="/department-index">
+                        <NavDropdown.Item as={Link} to="/all-minor-stat">
                           Hệ thống chỉ số khoa/ phòng
                         </NavDropdown.Item>
                       </NavDropdown>

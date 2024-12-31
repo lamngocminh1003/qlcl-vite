@@ -7,6 +7,8 @@ import { Formik } from "formik";
 import { TextField, Box } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as Yup from "yup";
+import docxFile from "../../../../assets/doc/file.docx";
+
 const ModalAddNewFiles = (props) => {
   let { repoHash, getMinorStatRepositoryNotesFromRepo } = props;
   const [show, setShow] = useState(false);
@@ -93,10 +95,24 @@ const ModalAddNewFiles = (props) => {
                   {" "}
                   <Box sx={{ gridColumn: "span 4" }}>
                     <div className="mb-3" sx={{ gridColumn: "span 4" }}>
-                      <label for="formFile" className="form-label me-1">
-                        Tải tài liệu lên{" "}
-                        <span className="text-danger">(*)</span>
-                      </label>
+                      <span className="d-flex justify-content-between align-items-center">
+                        <span>
+                          <label for="formFile" className="form-label ">
+                            Tải tài liệu lên{" "}
+                            <span className="text-danger">(*)</span>
+                          </label>
+                        </span>
+
+                        <span className="form-label me-1">
+                          <a
+                            href={docxFile}
+                            download="Biểu mẫu đăng ký chỉ số chất lượng.docx"
+                          >
+                            Tài liệu mẫu{" "}
+                            <i className="fa-solid fa-download ms-1"></i>
+                          </a>
+                        </span>
+                      </span>
                       <input
                         className="form-control"
                         type="file"

@@ -189,6 +189,7 @@ const DashboardHospitalIndexRevisionByYear = () => {
           {listCascadeByYear && listCascadeByYear.length > 0 ? (
             <>
               {listCascadeByYear.map((item, index) => {
+                console.log(item);
                 return (
                   <>
                     <div className="col-12 col-lg-4">
@@ -203,8 +204,12 @@ const DashboardHospitalIndexRevisionByYear = () => {
                           className="ps-5 text-center "
                           onClick={() => handleDepartmentRevision(item)}
                         >
+                          <span style={{ fontSize: "12px", color: "#E07B39" }}>
+                            Công thức đánh giá: {item.formula}
+                          </span>{" "}
+                          <br />
                           <span className="underline-opening">
-                            Bảng {index + 1}: {item.statName}{" "}
+                            Bảng {index + 1}: {item.statName}
                           </span>
                         </h6>
                       </div>

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { generateToken } from "../../services/fileService";
 import _ from "lodash";
-import { Oval } from "react-loader-spinner";
 import { useHistory } from "react-router-dom";
 import ModalDownloadFile from "../ManageFilesRevisionActive/ModalDownloadFile";
 import ScrollToTopButton from "../input/ScrollToTopButton";
@@ -13,6 +12,7 @@ import ModalDeleteFile from "../ManageFilesRevisionActive/ModalDeleteFile";
 import ModalEditFile from "../ManageFilesRevisionActive/ModalEditFile";
 import { updateFileInfo } from "../../services/fileService";
 import { Business, AdminPanelSettingsOutlined } from "@mui/icons-material";
+import CardComponent from "../input/CardComponent";
 import { Button } from "@mui/material";
 const AllActiveFiles = (props) => {
   const [endTime, setEndTime] = useState("9999-10-16T06:28:52.783Z"); // Sử dụng `null` làm ngày mặc định
@@ -106,6 +106,14 @@ const AllActiveFiles = (props) => {
     fetchAllFiles();
   };
   const [showEdit, setShowEdit] = useState(false);
+  let departmentFiles = [];
+  let AdminFiles = [];
+
+  if (listFiles && listFiles.length > 0) {
+    departmentFiles = listFiles.filter((item) => item.permission === 3);
+    AdminFiles = listFiles.filter((item) => item.permission === 0);
+  }
+
   return (
     <>
       <ModalDownloadFile
@@ -133,14 +141,44 @@ const AllActiveFiles = (props) => {
         </div>
         <div className="container">
           <div className="row">
-            <div>
-              <span>
+            <div className="d-flex justify-content-between gap-5  align-items-center">
+              <span className="d-flex justify-content-start gap-2  ">
                 <button className="btn btn-info" onClick={() => handleBack()}>
                   <span>
                     <i className="fa-solid fa-rotate-left me-1"></i>
                   </span>
                   <span>Trở về</span>
-                </button>
+                </button>{" "}
+              </span>
+              <span className="d-flex justify-content-between gap-2  align-items-end">
+                {categoryId == 1 && (
+                  <>
+                    <span>
+                      <CardComponent
+                        title="Tài liệu khoa/phòng"
+                        icon="fa-solid fa-users-between-lines"
+                        color="primary"
+                        content={`Số lượng: ${departmentFiles?.length}`}
+                      />
+                    </span>
+                    <span>
+                      <CardComponent
+                        title="Tài liệu quản trị viên"
+                        icon="fa-solid fa-user-shield"
+                        color="secondary"
+                        content={`Số lượng: ${AdminFiles?.length}`}
+                      />
+                    </span>
+                  </>
+                )}
+                <span>
+                  <CardComponent
+                    title="Tài liệu"
+                    icon="fa-solid fa-file"
+                    color="info"
+                    content={`Số lượng: ${listFiles?.length}`}
+                  />
+                </span>
               </span>
             </div>
             <div className="row mt-4 ">

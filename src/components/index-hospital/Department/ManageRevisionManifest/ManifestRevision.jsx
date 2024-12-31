@@ -3,7 +3,6 @@ import ModalDeleteRevision from "./ModalDeleteRevision";
 import ModalAddRevision from "./ModalAddRevision";
 import { useHistory } from "react-router-dom";
 import _ from "lodash";
-import { Oval } from "react-loader-spinner";
 import ScrollToTopButton from "../../../input/ScrollToTopButton";
 import { buildData } from "../BuildData";
 import { MinorStatDetailsByStatIdService } from "../../../../services/index/DepartmentStat/MinorStatDetailsService";

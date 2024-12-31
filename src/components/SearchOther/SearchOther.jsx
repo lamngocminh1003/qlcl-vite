@@ -1,15 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import { toast } from "react-toastify";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import _ from "lodash";
 import { useHistory } from "react-router-dom";
 const SearchOther = (props) => {
+  const { from } = props;
   const [show, setShow] = useState(false);
-  const [isShowLoading, setIsShowLoading] = useState(false);
   const categoryId = localStorage.getItem("categoryId");
   let history = useHistory();
   const handleClose = () => {
@@ -17,6 +16,9 @@ const SearchOther = (props) => {
   };
   const handleViewFolders = () => {
     history.push(`/folders`);
+  };
+  const handleViewCategory = () => {
+    history.push(`/categories`);
   };
   const handleViewAllFiles = () => {
     history.push(`/files`);
@@ -27,9 +29,8 @@ const SearchOther = (props) => {
   const handleShow = () => setShow(true);
   return (
     <>
-      <Button
-        variant="info"
-        className="mb-3"
+      <button
+        className="mb-3 btn btn-outline-info"
         onClick={handleShow}
         title="Tìm kiếm khác"
       >
@@ -37,7 +38,7 @@ const SearchOther = (props) => {
           <i className="fa-solid fa-magnifying-glass"></i>{" "}
         </span>
         Tìm kiếm khác
-      </Button>
+      </button>
       <Modal backdrop="static" centered show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title className="fs-6 text-uppercase text-primary">
@@ -47,15 +48,30 @@ const SearchOther = (props) => {
         <Modal.Body className="grid-example">
           <Container>
             <Row>
-              <Col xs={6} md={categoryId == 1 ? 4 : 6}>
-                <button
-                  className="btn btn-primary"
-                  onClick={() => handleViewFolders()}
-                >
-                  Tìm quy trình
-                  <i className="fa-solid fa-magnifying-glass ms-2"></i>
-                </button>
-              </Col>
+              {from === "/folders" ? (
+                <Col xs={6} md={categoryId == 1 ? 4 : 6}>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => handleViewCategory()}
+                  >
+                    Tìm thư mục
+                    <i className="fa-solid fa-magnifying-glass ms-2"></i>
+                  </button>
+                </Col>
+              ) : from === "/categories" ? (
+                <Col xs={6} md={categoryId == 1 ? 4 : 6}>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => handleViewFolders()}
+                  >
+                    Tìm quy trình
+                    <i className="fa-solid fa-magnifying-glass ms-2"></i>
+                  </button>
+                </Col>
+              ) : (
+                <></>
+              )}
+
               <Col xs={6} md={categoryId == 1 ? 4 : 6}>
                 <button
                   className="btn btn-success"

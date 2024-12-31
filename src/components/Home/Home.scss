@@ -17,7 +17,7 @@
       }
       .content-right {
         display: flex;
-        flex-direction: column;
+        flex-direction: row-reverse;
         justify-content: space-evenly;
         .item-up {
           .text-green {
@@ -36,9 +36,12 @@
       }
     }
     .down {
+      background: linear-gradient(to right, #e1ffb1, #c7f2a4, #a8cd89);
+
       background-color: #e1ffb1;
       gap: 100px;
       padding: 0 100px 0 230px;
+
       .content-left {
         .row {
           display: flex;
@@ -47,6 +50,65 @@
             text-align: right !important;
           }
           .col-lg-6 {
+            /* From Uiverse.io by Yaya12085 */
+            .card {
+              max-width: 300px;
+              border-radius: 0.5rem;
+              background-color: #fff;
+              box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+              border: 1px solid transparent;
+            }
+
+            .card a {
+              text-decoration: none;
+            }
+
+            .content {
+              padding: 1.1rem;
+            }
+
+            .image {
+              object-fit: cover;
+              width: 100%;
+              height: 150px;
+            }
+
+            .title {
+              color: #111827;
+              font-size: 1.125rem;
+              line-height: 1.75rem;
+              font-weight: 600;
+            }
+
+            .desc {
+              margin-top: 0.5rem;
+              color: #6b7280;
+              font-size: 0.875rem;
+              line-height: 1.25rem;
+            }
+
+            .action {
+              display: inline-flex;
+              margin-top: 1rem;
+              color: #ffffff;
+              font-size: 0.875rem;
+              line-height: 1.25rem;
+              font-weight: 500;
+              align-items: center;
+              gap: 0.25rem;
+              background-color: #2563eb;
+              padding: 4px 8px;
+              border-radius: 4px;
+            }
+
+            .action span {
+              transition: 0.3s ease;
+            }
+
+            .action:hover span {
+              transform: translateX(4px);
+            }
+
             .row {
               .img {
                 margin-right: 15px;
@@ -73,9 +135,7 @@
       }
       .content-right {
         display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+        flex-direction: row-reverse;
         .container {
           border: 20px solid #7ed956;
           background-color: white;
@@ -310,12 +370,12 @@
         }
       }
       .content-right {
-        margin-top: 50px;
+        margin-top: 50px; /* From Uiverse.io by Thomasfadi */
+
         .container {
           border: 20px solid #7ed956;
           background-color: white;
           display: flex;
-          justify-content: center;
           flex-direction: column;
           align-items: center;
           padding: 30px 50px 50px 50px;
@@ -352,4 +412,53 @@
       }
     }
   }
+}
+.cards {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+
+.cards .red {
+  background-color: #88c273;
+}
+
+.cards .blue {
+  background-color: #72bf78;
+}
+
+.cards .green {
+  background-color: #18cd5e;
+}
+
+.cards .card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  height: 165px;
+  width: 165px;
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+  transition: 400ms;
+}
+
+.cards .card p.tip {
+  font-size: 1em;
+  font-weight: 700;
+}
+
+.cards .card p.second-text {
+  font-size: 0.7em;
+}
+
+.cards .card:hover {
+  transform: scale(1.2, 1.2);
+}
+
+.cards:hover > .card:not(:hover) {
+  filter: blur(10px);
+  transform: scale(0.9, 0.9);
 }

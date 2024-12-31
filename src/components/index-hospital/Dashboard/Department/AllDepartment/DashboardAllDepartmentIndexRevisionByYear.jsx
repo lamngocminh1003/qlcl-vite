@@ -222,6 +222,12 @@ const DashboardAllDepartmentIndexRevisionByYear = () => {
                             className="department  underline-opening"
                             onClick={() => handleDepartmentRevision(item)}
                           >
+                            <span
+                              style={{ fontSize: "12px", color: "#E07B39" }}
+                            >
+                              Công thức đánh giá: {item.formulaManifest}
+                            </span>{" "}
+                            <br />
                             Bảng {index + 1}: {item.statName}
                           </span>
                         </h6>

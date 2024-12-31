@@ -5,7 +5,7 @@ import ModalEditUser from "./ModalEditUser";
 import ModalAddNewUser from "./ModalAddNewUser";
 import ModalDeleteUser from "./ModalDeleteUser";
 import { useHistory } from "react-router-dom";
-import { Oval } from "react-loader-spinner";
+import CardComponent from "../input/CardComponent";
 import ScrollToTopButton from "../input/ScrollToTopButton";
 import {
   DataGrid,
@@ -186,24 +186,34 @@ const Users = (props) => {
           </span>
         </div>
         <div className="container">
-          <div className="d-flex gap-3">
-            <span>
-              <ModalAddNewUser
-                handleUpdateTable={handleUpdateTable}
-                setListCategories={setListCategories}
-                listCategories={listCategories}
-                fetchUsers={fetchUsers}
-                listUsers={listUsers}
-                categoryId={categoryId}
-              />
+          <div className="d-flex gap-3 justify-content-between  align-items-end">
+            <span className="d-flex gap-3 justify-content-start gap-2">
+              <span>
+                <ModalAddNewUser
+                  handleUpdateTable={handleUpdateTable}
+                  setListCategories={setListCategories}
+                  listCategories={listCategories}
+                  fetchUsers={fetchUsers}
+                  listUsers={listUsers}
+                  categoryId={categoryId}
+                />
+              </span>
+              <span>
+                <button className="btn btn-info" onClick={() => handleBack()}>
+                  <span>
+                    <i className="fa-solid fa-rotate-left me-1"></i>
+                  </span>
+                  <span>Trở về</span>
+                </button>
+              </span>
             </span>
-            <span>
-              <button className="btn btn-info" onClick={() => handleBack()}>
-                <span>
-                  <i className="fa-solid fa-rotate-left me-1"></i>
-                </span>
-                <span>Trở về</span>
-              </button>
+            <span className="d-flex gap-3 justify-content-end ">
+              <CardComponent
+                title="Người dùng"
+                icon="fa-solid fa-user"
+                color="info"
+                content={`Số lượng: ${listUsers?.length}`}
+              />
             </span>
           </div>
           <Box

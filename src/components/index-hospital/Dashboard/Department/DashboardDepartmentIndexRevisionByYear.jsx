@@ -236,6 +236,10 @@ const DashboardDepartmentIndexRevisionByYear = (props) => {
                       </div>{" "}
                       <div>
                         <h6 className="ps-5  text-center ">
+                          <span style={{ fontSize: "12px", color: "#E07B39" }}>
+                            Công thức đánh giá: {item.formulaManifest}
+                          </span>{" "}
+                          <br />
                           <span
                             className="department  underline-opening"
                             onClick={() => handleDepartmentRevision(item)}

@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import NativeSelect from "@mui/material/NativeSelect";
+import { useHistory } from "react-router-dom";
+
 import {
   createMinorStatManifestForDepartmentService,
   createMinorStatManifestForAdminService,
@@ -14,6 +16,8 @@ import { TextField, Box } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as Yup from "yup";
 const ModalAddRevision = (props) => {
+  let history = useHistory();
+
   const [show, setShow] = useState(false);
   const formula = ["KQ > MT", "KQ >= MT", "KQ < MT", "KQ <= MT", "KQ == MT"];
   const [selectedValue, setSelectedValue] = useState(formula[0]);
@@ -30,6 +34,7 @@ const ModalAddRevision = (props) => {
     categoryId,
     repoHash,
     MinorStatDetailsByStatId,
+    departmentId,
   } = props;
   const initialValues = {
     targetNumber: "",
@@ -70,6 +75,7 @@ const ModalAddRevision = (props) => {
         MinorStatManifestByStatAndYear(indexId, effectiveYear);
         MinorStatDetailsByStatId(indexId);
         setIsShowLoadingForAd(false);
+        history.push(`/department-index-revision/${indexId}/${departmentId}`);
       }
     } catch (error) {
       toast.error("Thêm mới phiên bản thất bại");

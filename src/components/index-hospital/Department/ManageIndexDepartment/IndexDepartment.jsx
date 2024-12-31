@@ -178,30 +178,32 @@ const IndexDepartment = () => {
           <div className="container mb-3 ">
             <div className="d-flex justify-content-between mb-3">
               <div className=" d-flex gap-4 align-items-center">
-                <span>
-                  <Button
-                    variant="outlined"
-                    onClick={() => handleViewAllMinorStat()}
-                  >
-                    Xem tất cả chỉ số
-                  </Button>
-                </span>{" "}
-                <span>
-                  <Button
-                    variant="outlined"
-                    onClick={() => handleViewChartAllDepartmentByYear()}
-                  >
-                    Xem chỉ số trong một năm
-                  </Button>
-                </span>{" "}
-                <span>
-                  <Button
-                    variant="outlined"
-                    onClick={() => handleViewChartAllDepartmentByYearSpan()}
-                  >
-                    Xem chỉ số trong nhiều năm
-                  </Button>
-                </span>{" "}
+                <span className="d-flex gap-4 align-items-center">
+                  <span>
+                    <Button
+                      variant="outlined"
+                      onClick={() => handleViewAllMinorStat()}
+                    >
+                      Xem tất cả chỉ số
+                    </Button>
+                  </span>{" "}
+                  <span>
+                    <Button
+                      variant="outlined"
+                      onClick={() => handleViewChartAllDepartmentByYear()}
+                    >
+                      Xem chỉ số trong một năm
+                    </Button>
+                  </span>{" "}
+                  <span>
+                    <Button
+                      variant="outlined"
+                      onClick={() => handleViewChartAllDepartmentByYearSpan()}
+                    >
+                      Xem chỉ số trong nhiều năm
+                    </Button>
+                  </span>{" "}
+                </span>
               </div>
               <div className=" d-flex justify-content-around gap-4">
                 <span>

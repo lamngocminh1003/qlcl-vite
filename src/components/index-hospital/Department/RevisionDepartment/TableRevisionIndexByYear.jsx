@@ -155,6 +155,14 @@ const TableRevisionIndexByYear = (props) => {
       field: "effectiveYear",
       headerName: "Năm",
       cellClassName: "name-column--cell",
+      renderCell: (params) => (
+        <a
+          onClick={() => handleManifestRevision(params.row)}
+          style={{ textDecoration: "none", cursor: "pointer" }}
+        >
+          {params.value}
+        </a>
+      ),
     },
     {
       field: "criteriaManifest",

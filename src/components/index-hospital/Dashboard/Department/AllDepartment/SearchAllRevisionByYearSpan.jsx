@@ -5,7 +5,13 @@ import IconButton from "@mui/material/IconButton";
 import * as Yup from "yup";
 import { Formik } from "formik";
 const SearchAllRevisionByYearSpan = (props) => {
-  const { yearEnd, yearStart, setYearEnd, setYearStart } = props;
+  const {
+    yearEnd,
+    yearStart,
+    setYearEnd,
+    setYearStart,
+    fetchAllCascadeByYear,
+  } = props;
   const userSchema = Yup.object().shape({
     yearStart: Yup.string()
       .required("Năm bắt đầu không được để trống")
@@ -82,6 +88,7 @@ const SearchAllRevisionByYearSpan = (props) => {
     setYearEnd(values.yearEnd);
     localStorage.setItem("yearStart", values.yearStart);
     localStorage.setItem("yearEnd", values.yearEnd);
+    fetchAllCascadeByYear(yearStart, yearEnd);
   };
   return (
     <>

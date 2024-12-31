@@ -23,8 +23,7 @@ const TableDepartmentRevision = (props) => {
     columnActive,
     columnOverride,
   } = props;
-  const columnAdmin = [
-    ...column1,
+  const columnStat = [
     {
       field: "formula",
       headerName: "Công thức",
@@ -442,11 +441,21 @@ const TableDepartmentRevision = (props) => {
         );
       },
     },
-
+  ];
+  const columnAdmin = [
+    ...column1,
+    ...columnStat,
     ...columnActive,
     ...columnOverride,
   ];
-
+  const columnDepartment = [...column1, ...columnStat];
+  let selectedColumn;
+  const categoryIdLocal = localStorage.getItem("categoryId");
+  if (categoryIdLocal == 1) {
+    selectedColumn = columnAdmin;
+  } else {
+    selectedColumn = columnDepartment;
+  }
   const [pageSize, setPageSize] = useState(10);
   function CustomToolbar() {
     return (
@@ -473,7 +482,7 @@ const TableDepartmentRevision = (props) => {
               ...row,
               stt: index + 1,
             }))}
-            columns={columnAdmin}
+            columns={selectedColumn}
             components={{
               Toolbar: CustomToolbar,
             }}

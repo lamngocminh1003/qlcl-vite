@@ -13,9 +13,11 @@ import {
   Edit,
   Delete,
   CalendarMonth,
+  Business,
 } from "@mui/icons-material";
+
 import * as React from "react";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import ModalEditDepartmentFromIndex from "../ManageIndexFromDepartment/ModalEditDepartmentFromIndex";
 import ModalDeleteDepartmentFromIndex from "../ManageIndexFromDepartment/ModalDeleteDepartmentFromIndex";
 import { fetchAllCategories } from "../../../../services/categoryService";
@@ -54,6 +56,7 @@ const IndexFromDepartment = (props) => {
     fetchListMinorStats();
     getCategoryByCategoryId();
   }, []);
+  const departmentId = localStorage.getItem("categoryId");
   const getCategoryByCategoryId = async () => {
     let res = await fetchAllCategories();
     if (res && res.data.categories) {
@@ -100,7 +103,8 @@ const IndexFromDepartment = (props) => {
     setShowEdit(true);
     setDataIndex(params.row);
   };
-  const handleBack = () => {
+
+  const handleViewAllDepartment = () => {
     history.push(`/department-index`);
   };
   const handleDelete = (params) => {
@@ -221,6 +225,12 @@ const IndexFromDepartment = (props) => {
   } else {
     selectedColumns = columns;
   }
+  const handleViewChartAllDepartmentByYear = () => {
+    history.push(`/all-department-index-revision-by-year`);
+  };
+  const handleViewChartAllDepartmentByYearSpan = () => {
+    history.push(`/all-department-index-revision-by-year-span`);
+  };
   function CustomToolbar() {
     return (
       <GridToolbarContainer>
@@ -259,17 +269,8 @@ const IndexFromDepartment = (props) => {
           </div>
           <div className="container mb-3">
             <div className="d-flex mb-3 justify-content-between">
-              {" "}
-              <span className="d-flex gap-3 align-items-center">
-                <span>
-                  <button className="btn btn-info" onClick={() => handleBack()}>
-                    <span>
-                      <i className="fa-solid fa-rotate-left me-1"></i>
-                    </span>
-                    <span>Trở về</span>
-                  </button>
-                </span>
-                <span>
+              <span className="d-flex  flex-column justify-content-evenly">
+                <span className="d-flex  gap-3 ">
                   <span>
                     <ModalAddNewDepartmentFromIndex
                       fetchListMinorStats={fetchListMinorStats}
@@ -277,8 +278,32 @@ const IndexFromDepartment = (props) => {
                       categoryId={categoryId}
                     />
                   </span>
+                  <button
+                    className="btn btn-outline-info"
+                    onClick={() => handleViewAllDepartment()}
+                  >
+                    <span>
+                      <Business />{" "}
+                    </span>
+                    <span>Xem tất cả khoa/ phòng</span>
+                  </button>
+                </span>
+                <span className="d-flex  gap-3">
+                  <Button
+                    variant="outlined"
+                    onClick={() => handleViewChartAllDepartmentByYear()}
+                  >
+                    Xem chỉ số trong một năm
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    onClick={() => handleViewChartAllDepartmentByYearSpan()}
+                  >
+                    Xem chỉ số trong nhiều năm
+                  </Button>
                 </span>
               </span>
+
               <span className="d-flex gap-3">
                 <span className="d-flex align-items-center">
                   <BasicCard

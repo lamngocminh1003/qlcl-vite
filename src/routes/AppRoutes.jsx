@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { CardFooter } from "react-bootstrap";
 import "../App.scss";
+import greenLogo from "../assets/image/greenlogo.png";
+
 import Page404 from "../components/ErrorPage/Page404";
 import Login from "../components/Login/Login";
 import Users from "../components/ManageUsers/Users";
@@ -38,10 +40,13 @@ import AllDepartmentIndexRevisionByYear from "../components/index-hospital/Depar
 import AllDepartmentIndexRevisionByYearSpan from "../components/index-hospital/Department/RevisionDepartment/AllDepartmentIndexRevisionByYearSpan";
 import DepartmentIndexRevisionByYear from "../components/index-hospital/Department/RevisionDepartment/DepartmentIndexRevisionByYear";
 import DepartmentIndexRevisionByYearSpan from "../components/index-hospital/Department/RevisionDepartment/DepartmentIndexRevisionByYearSpan";
+import ScrollToTop from "../components/ScrollToTop";
+import FooterComponent from "../components/Footer/FooterComponent";
 const AppRoutes = (props) => {
   return (
     <>
       <Router>
+        <ScrollToTop />
         <Header sticky="top" />{" "}
         <Switch>
           <Route path="/login">
@@ -167,8 +172,8 @@ const AppRoutes = (props) => {
             <Page404 />{" "}
           </Route>
         </Switch>
-        <CardFooter sticky="bottom" className="footer">
-          Phiên bản: 31-01-2024
+        <CardFooter>
+          <FooterComponent />
         </CardFooter>
       </Router>
     </>

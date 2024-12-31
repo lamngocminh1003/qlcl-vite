@@ -1,18 +1,20 @@
 import { useHistory } from "react-router-dom";
 import greenLogo from "../../assets/image/greenlogo.png";
 import qt from "../../assets/image/qt.png";
-import s from "../../assets/image/5s.png";
-import antoan from "../../assets/image/antoan.png";
-import ctcl from "../../assets/image/ctcl.png";
+import qlqt from "../../assets/image/qlqt.png";
+import qlcsbv from "../../assets/image/qlcsbv.png";
+import pm from "../../assets/image/pm.png";
+import tk from "../../assets/image/tk.png";
 import cscl from "../../assets/image/cscl.jpg";
-import iso from "../../assets/image/iso.png";
 import logoText from "../../assets/image/logotext1.png";
 import "./Home.scss";
 import ScrollToTopButton from "../input/ScrollToTopButton";
+import Carousel from "react-bootstrap/Carousel";
+import ExampleCarouselImage from "../input/ExampleCarouselImage";
 const Home = (props) => {
   let history = useHistory();
   const handleViewCategory = () => {
-    history.push(`/categories`);
+    history.push(`/folders`);
   };
   const handleViewHospitalIndexByYear = () => {
     history.push(`/hospital-index-revision-by-year`);
@@ -20,8 +22,8 @@ const Home = (props) => {
   return (
     <>
       <div className="homepage">
-        <div className="row up px-5 pt-2">
-          <div className="col-4 text-center d-flex justify-content-end align-items-start pe-5 content-left">
+        <div className="row up px-5 p-2">
+          <div className="col-3 text-center d-flex justify-content-end align-items-start pe-5 content-left">
             {" "}
             <img
               alt="Logo Bệnh viện Nhi Đồng 2"
@@ -29,7 +31,7 @@ const Home = (props) => {
               className="d-flex align-items-center img"
             />{" "}
           </div>
-          <div className="col-8 content-right ">
+          <div className="col-9 content-right align-items-center">
             <div className="item-up">
               <h1 className="upper-case text-green text pt-1">
                 PHÒNG QUẢN LÝ CHẤT LƯỢNG
@@ -42,114 +44,110 @@ const Home = (props) => {
             </div>
           </div>
         </div>
+        <div className="row " style={{ backgroundColor: "#DCFFB7" }}>
+          <Carousel>
+            <Carousel.Item>
+              <ExampleCarouselImage imageUrl={pm} />
+            </Carousel.Item>
+            <Carousel.Item>
+              <ExampleCarouselImage imageUrl={qlqt} />
+            </Carousel.Item>
+            <Carousel.Item>
+              <ExampleCarouselImage imageUrl={qlcsbv} />
+            </Carousel.Item>
+          </Carousel>
+        </div>
+
         <div className="row down py-5">
-          <div className="content-left col-lg-5   ">
+          <div className="content-left col-lg-5  ">
             <div className="row ">
-              <div className="col-lg-6">
-                <div className="row">
-                  <img className="img" alt="Quản lý quy trình" src={qt} />
-                </div>
-                <div className="row text-center">
-                  <span>
-                    <button
-                      className="btn btn-warning"
-                      style={{ minWidth: "180px" }}
+              <div className="col-lg-6 ">
+                <div className="card">
+                  <div className="image">
+                    {" "}
+                    <img
+                      style={{ height: "150px", width: "230px" }}
+                      alt="Quản lý quy trình"
+                      src={qt}
+                    />
+                  </div>
+                  <div className="content">
+                    <a onClick={() => handleViewCategory()}>
+                      <span className="title">QUẢN LÝ QUY TRÌNH</span>
+                    </a>
+
+                    <p className="desc">
+                      Tạo, chỉnh sửa, tham chiếu và quản lý quy trình làm việc
+                      hoặc tiêu chuẩn áp dụng cho các bộ phận trong bệnh viện.
+                      Gắn quy trình vào các khoa/phòng hoặc chỉ số chất lượng cụ
+                      thể.
+                    </p>
+
+                    <a
+                      className="btn btn-outline-success "
                       onClick={() => handleViewCategory()}
                     >
-                      QUẢN LÝ QUY TRÌNH
-                    </button>
-                  </span>
+                      Xem tại đây
+                      <span aria-hidden="true">→</span>
+                    </a>
+                  </div>
                 </div>
-              </div>
-              <div className="col-lg-6">
-                {" "}
-                <div className="row">
-                  <img className="img" alt="Chỉ số chất lượng" src={cscl} />
-                </div>
-                <div className="row text-center">
-                  <span>
-                    <button
-                      className="btn btn-warning"
-                      style={{ minWidth: "180px" }}
+              </div>{" "}
+              <div className="col-lg-6 mb-4">
+                <div className="card">
+                  <div className="image">
+                    {" "}
+                    <img
+                      style={{ height: "150px", width: "230px" }}
+                      alt="Chỉ số chất lượng"
+                      src={cscl}
+                    />
+                  </div>
+                  <div className="content">
+                    <a onClick={() => handleViewHospitalIndexByYear()}>
+                      <span className="title">CHỈ SỐ CHẤT LƯỢNG</span>
+                    </a>
+
+                    <p className="desc">
+                      Tạo và quản lý các chỉ số đánh giá chất lượng ở cấp độ
+                      bệnh viện,khoa/ phòng bao gồm mục tiêu, đánh giá, và điểm
+                      số thực tế. Tích hợp công cụ đánh giá hiệu quả giữa các
+                      năm.
+                    </p>
+
+                    <a
+                      className="btn btn-outline-success "
                       onClick={() => handleViewHospitalIndexByYear()}
                     >
-                      CHỈ SỐ CHẤT LƯỢNG
-                    </button>
-                  </span>
+                      Xem tại đây
+                      <span aria-hidden="true">→</span>
+                    </a>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="row mt-5">
-              <div className="col-lg-6">
+              <div className="col-lg-12 ">
                 {" "}
-                <div className="row">
-                  <img className="img" alt="ISO" src={iso} />
-                </div>
-                <div className="row text-center">
-                  <span>
-                    <button
-                      className="btn btn-warning"
-                      style={{ minWidth: "180px" }}
-                    >
-                      ISO
-                    </button>
-                  </span>
-                </div>
+                <div className="progress ">
+                  <div
+                    className="progress-bar progress-bar-striped "
+                    role="progressbar"
+                    style={{ width: "100%", backgroundColor: "#8FD14F" }}
+                    aria-valuenow="100"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  ></div>
+                </div>{" "}
+                <img
+                  alt="Logo Bệnh viện Nhi Đồng 2"
+                  style={{ width: "630px" }}
+                  src={tk}
+                  className="d-flex align-items-center   border border-light rounded mt-4"
+                />{" "}
               </div>
-              <div className="col-lg-6">
-                {" "}
-                <div className="row">
-                  <img className="img" alt="Cải tiến chất lượng" src={ctcl} />
-                </div>
-                <div className="row text-center">
-                  <span>
-                    <button
-                      className="btn btn-warning"
-                      style={{ minWidth: "180px" }}
-                    >
-                      CẢI TIẾN CHẤT LƯỢNG
-                    </button>
-                  </span>
-                </div>
-              </div>{" "}
-            </div>
-            <div className="row mt-5">
-              <div className="col-lg-6">
-                {" "}
-                <div className="row">
-                  <img className="img" alt="5S" src={s} />
-                </div>
-                <div className="row text-center">
-                  <span>
-                    <button
-                      className="btn btn-warning"
-                      style={{ minWidth: "180px" }}
-                    >
-                      5S
-                    </button>
-                  </span>
-                </div>
-              </div>{" "}
-              <div className="col-lg-6">
-                {" "}
-                <div className="row">
-                  <img className="img" alt="An toàn người bệnh" src={antoan} />
-                </div>
-                <div className="row text-center">
-                  <span>
-                    <button
-                      className="btn btn-warning"
-                      style={{ minWidth: "180px" }}
-                    >
-                      AN TOÀN NGƯỜI BỆNH
-                    </button>
-                  </span>
-                </div>
-              </div>{" "}
             </div>
           </div>
-          <div className="content-right col-lg-6 px-4 px-lg-5">
-            <div className="container">
+          <div className="content-right col-lg-6 px-4 px-lg-5 d-flex flex-column  align-items-start">
+            <div className="container mb-4">
               <div className="row">
                 <div className="col-lg-12">
                   <img
@@ -182,6 +180,70 @@ const Home = (props) => {
                 <h6 className="text-center">GIÁ TRỊ CỐT LÕI</h6>
                 <div className="text-center">
                   "AN TOÀN - CHẤT LƯỢNG - HIỆU QUẢ - THÂN THIỆN"
+                </div>
+              </div>
+            </div>
+            <div className="row">
+              <div className="progress ">
+                <div
+                  className="progress-bar progress-bar-striped "
+                  role="progressbar"
+                  style={{
+                    width: "100%",
+                    backgroundColor: "#A2CA71",
+                  }}
+                  aria-valuenow="100"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                ></div>
+              </div>{" "}
+              <div
+                className="text-center h2 my-3 "
+                style={{ fontWeight: "700", color: "#1A5319" }}
+              >
+                <i className="fa-solid fa-star me-2 "></i>
+                NỔI BẬT
+              </div>
+              <div className="cards ">
+                <div className="card red">
+                  <i className="fa-solid fa-folder h1"></i>
+                  <p className="px-2 h6">Với hơn 130 quy trình tại bệnh viện</p>
+                </div>
+                <div className="card blue">
+                  <i className="fa-solid fa-file-shield h1"></i>{" "}
+                  <p className="px-2 h6">
+                    206 tài liệu được công bố và hết hiệu lực
+                  </p>
+                </div>
+                <div className="card green">
+                  {" "}
+                  <i className="fa-solid fa-hospital-user h1"></i>{" "}
+                  <p className="px-2 h6">
+                    Lưu trữ đầy đủ người dùng từ 49 khoa/phòng
+                  </p>
+                </div>
+              </div>{" "}
+              <div className="cards mt-3">
+                <div className="card green">
+                  {" "}
+                  <i className="fa-solid fa-hospital h1"></i>{" "}
+                  <p className="px-2 h6">
+                    Lưu trữ 66 kết quả đánh giá năm dữ liệu thuộc chỉ số bệnh
+                    viện
+                  </p>
+                </div>{" "}
+                <div className="card red">
+                  <i className="fa-solid fa-users-between-lines h1"></i>{" "}
+                  <p className="px-2 h6">
+                    Cập nhật hơn 9000 kết quả đánh giá của các chỉ số thuộc
+                    khoa/phòng
+                  </p>
+                </div>
+                <div className="card blue">
+                  <i class="fa-solid fa-chart-pie h1"></i>{" "}
+                  <p className="px-2 h6">
+                    Các dạng thống kê số liệu đa dạng hiệu quả
+                  </p>{" "}
                 </div>
               </div>
             </div>
